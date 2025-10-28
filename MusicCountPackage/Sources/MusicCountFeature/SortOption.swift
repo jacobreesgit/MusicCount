@@ -2,14 +2,26 @@ import Foundation
 
 /// Options for sorting the song list
 enum SortOption: String, CaseIterable, Identifiable, Sendable {
-    case playCountDescending = "Play Count (High to Low)"
-    case playCountAscending = "Play Count (Low to High)"
-    case titleAscending = "Title (A-Z)"
-    case titleDescending = "Title (Z-A)"
-    case artistAscending = "Artist (A-Z)"
-    case artistDescending = "Artist (Z-A)"
+    case playCountDescending = "playCountDescending"
+    case playCountAscending = "playCountAscending"
+    case titleAscending = "titleAscending"
+    case titleDescending = "titleDescending"
+    case artistAscending = "artistAscending"
+    case artistDescending = "artistDescending"
 
     var id: String { rawValue }
+
+    /// Display name for the sort option
+    var displayName: String {
+        switch self {
+        case .playCountDescending, .playCountAscending:
+            return "Play Count"
+        case .titleAscending, .titleDescending:
+            return "Title"
+        case .artistAscending, .artistDescending:
+            return "Artist"
+        }
+    }
 
     /// Sort an array of songs based on this option
     func sorted(_ songs: [SongInfo]) -> [SongInfo] {
@@ -32,12 +44,25 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
     /// Short label for display in toolbar
     var shortLabel: String {
         switch self {
-        case .playCountDescending: return "Play Count ↓"
-        case .playCountAscending: return "Play Count ↑"
-        case .titleAscending: return "Title ↑"
-        case .titleDescending: return "Title ↓"
-        case .artistAscending: return "Artist ↑"
-        case .artistDescending: return "Artist ↓"
+        case .playCountDescending: return "Play Count"
+        case .playCountAscending: return "Play Count"
+        case .titleAscending: return "Title"
+        case .titleDescending: return "Title"
+        case .artistAscending: return "Artist"
+        case .artistDescending: return "Artist"
+        }
+    }
+
+    /// Icon that represents the sort direction
+    /// - Parameter isSelected: Whether this option is currently selected
+    /// - Returns: SF Symbol name for the icon (filled if selected, outline if not)
+    func icon(isSelected: Bool) -> String {
+        let suffix = isSelected ? ".fill" : ""
+        switch self {
+        case .playCountDescending, .titleDescending, .artistDescending:
+            return "arrow.down.circle\(suffix)"
+        case .playCountAscending, .titleAscending, .artistAscending:
+            return "arrow.up.circle\(suffix)"
         }
     }
 }

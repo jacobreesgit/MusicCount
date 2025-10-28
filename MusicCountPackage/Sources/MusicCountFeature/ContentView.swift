@@ -185,31 +185,64 @@ public struct ContentView: View {
                     selectionSlot: selectionSlot(for: song)
                 )
                 .accessibilityLabel("\(song.title) by \(song.artist), \(song.playCount) plays")
+                .swipeActions(edge: .leading) {
+                    Button {
+                        if selectedSong1?.id == song.id {
+                            selectedSong1 = nil
+                        } else {
+                            selectedSong1 = song
+                        }
+                    } label: {
+                        if selectedSong1?.id == song.id {
+                            Label("Remove", systemImage: "xmark.circle.fill")
+                        } else {
+                            Label("Song 1", systemImage: "1.circle.fill")
+                        }
+                    }
+                    .tint(selectedSong1?.id == song.id ? .orange : .blue)
+                }
+                .swipeActions(edge: .trailing) {
+                    Button {
+                        if selectedSong2?.id == song.id {
+                            selectedSong2 = nil
+                        } else {
+                            selectedSong2 = song
+                        }
+                    } label: {
+                        if selectedSong2?.id == song.id {
+                            Label("Remove", systemImage: "xmark.circle.fill")
+                        } else {
+                            Label("Song 2", systemImage: "2.circle.fill")
+                        }
+                    }
+                    .tint(selectedSong2?.id == song.id ? .orange : .green)
+                }
                 .contextMenu {
                     Button {
-                        selectedSong1 = song
+                        if selectedSong1?.id == song.id {
+                            selectedSong1 = nil
+                        } else {
+                            selectedSong1 = song
+                        }
                     } label: {
-                        Label("Select as Song 1", systemImage: "1.circle.fill")
+                        if selectedSong1?.id == song.id {
+                            Label("Deselect Song 1", systemImage: "1.circle.fill")
+                        } else {
+                            Label("Select as Song 1", systemImage: "1.circle.fill")
+                        }
                     }
 
                     Button {
-                        selectedSong2 = song
+                        if selectedSong2?.id == song.id {
+                            selectedSong2 = nil
+                        } else {
+                            selectedSong2 = song
+                        }
                     } label: {
-                        Label("Select as Song 2", systemImage: "2.circle.fill")
-                    }
-
-                    if selectedSong1?.id == song.id || selectedSong2?.id == song.id {
-                        Divider()
-
-                        Button(role: .destructive) {
-                            if selectedSong1?.id == song.id {
-                                selectedSong1 = nil
-                            }
-                            if selectedSong2?.id == song.id {
-                                selectedSong2 = nil
-                            }
-                        } label: {
-                            Label("Clear Selection", systemImage: "xmark.circle")
+                        if selectedSong2?.id == song.id {
+                            Label("Deselect Song 2", systemImage: "2.circle.fill")
+                        } else {
+                            Label("Select as Song 2", systemImage: "2.circle.fill")
                         }
                     }
                 }
@@ -224,7 +257,7 @@ public struct ContentView: View {
                 Menu {
                     Picker("Sort", selection: $sortOption) {
                         ForEach(SortOption.allCases) { option in
-                            Text(option.rawValue).tag(option)
+                            Label(option.displayName, systemImage: option.icon(isSelected: option == sortOption)).tag(option)
                         }
                     }
                 } label: {
