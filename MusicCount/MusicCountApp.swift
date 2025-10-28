@@ -5,7 +5,7 @@ import MusicCountFeature
 struct MusicCountApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
         }
     }
 }
