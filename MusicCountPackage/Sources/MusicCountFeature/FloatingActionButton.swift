@@ -22,7 +22,7 @@ struct FloatingActionButton: View {
                 .padding(.vertical, 16)
                 .background(
                     Capsule()
-                        .fill(isEnabled ? Color.blue.gradient : Color.secondary.opacity(0.3).gradient)
+                        .fill(isEnabled ? Color.blue.gradient : Color.secondary.opacity(0.6).gradient)
                 )
                 .shadow(color: Color.primary.opacity(0.15), radius: 8, x: 0, y: 4)
 

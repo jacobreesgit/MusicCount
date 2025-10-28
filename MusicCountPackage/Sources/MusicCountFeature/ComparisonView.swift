@@ -260,12 +260,13 @@ struct ComparisonView: View {
     }
 
     private var lowerSongLabel: String {
-        if song1.title == song2.title {
-            // Same title, need to distinguish by number
+        if song1.title.lowercased() == song2.title.lowercased() &&
+           song1.artist.lowercased() == song2.artist.lowercased() {
+            // Same title and artist, need to distinguish by number
             let songNumber = lowerSong.id == song1.id ? "Song 1" : "Song 2"
             return "\(lowerSong.title) (\(songNumber))"
         } else {
-            // Different titles, just show the title
+            // Different songs, just show the title
             return lowerSong.title
         }
     }
