@@ -36,18 +36,22 @@ struct SongRowView: View {
 
             Spacer()
 
-            // Right Side: Duration and Badge
-            VStack(alignment: .trailing, spacing: 4) {
+            // Right Side: Duration or Badge
+            ZStack {
+                // Duration (shown when not selected)
                 Text(song.formattedDuration)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
+                    .opacity(selectionSlot == nil ? 1 : 0)
 
-                // Selection Badge
+                // Selection Badge (shown when selected)
                 if let slot = selectionSlot {
                     SelectionBadge(slot: slot)
+                        .transition(.scale.combined(with: .opacity))
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: selectionSlot)
         }
         .padding(.vertical, 6)
         .accessibilityElement(children: .combine)
