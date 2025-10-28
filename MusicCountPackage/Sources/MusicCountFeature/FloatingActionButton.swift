@@ -22,9 +22,9 @@ struct FloatingActionButton: View {
                 .padding(.vertical, 16)
                 .background(
                     Capsule()
-                        .fill(isEnabled ? Color.blue.gradient : Color.gray.gradient)
+                        .fill(isEnabled ? Color.blue.gradient : Color.secondary.opacity(0.3).gradient)
                 )
-                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.primary.opacity(0.15), radius: 8, x: 0, y: 4)
 
                 // Badge showing selection count
                 if selectedCount > 0 {
