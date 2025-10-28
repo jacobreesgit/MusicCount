@@ -13,12 +13,10 @@ struct PlayerView: View {
             )
             .ignoresSafeArea()
 
-            if let session = playerService.currentSession {
-                if session.isCompleted {
-                    completionView(session: session)
-                } else {
-                    playerContent(session: session)
-                }
+            if let session = playerService.currentSession, session.isCompleted {
+                completionView(session: session)
+            } else {
+                playerContent(session: playerService.currentSession)
             }
         }
         .toolbar {
@@ -26,6 +24,7 @@ struct PlayerView: View {
                 Button("Clear Session") {
                     playerService.cancelSession()
                 }
+                .disabled(playerService.currentSession == nil)
             }
         }
     }
@@ -33,18 +32,18 @@ struct PlayerView: View {
     // MARK: - Player Content
 
     @ViewBuilder
-    private func playerContent(session: MatchingSession) -> some View {
+    private func playerContent(session: MatchingSession?) -> some View {
         VStack(spacing: 32) {
             Spacer()
 
             // Song Info
             VStack(spacing: 8) {
-                Text(session.songTitle)
+                Text(session?.songTitle ?? "No Active Session")
                     .font(.title2)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
 
-                Text(session.songArtist)
+                Text(session?.songArtist ?? "Select songs to begin")
                     .font(.title3)
                     .foregroundStyle(.secondary)
             }
@@ -54,11 +53,11 @@ struct PlayerView: View {
             VStack(spacing: 16) {
                 // Play progress
                 VStack(spacing: 8) {
-                    Text("Play \(session.completedPlays + 1) of \(session.targetPlays)")
+                    Text("Play \((session?.completedPlays ?? 0) + 1) of \(session?.targetPlays ?? 0)")
                         .font(.headline)
                         .fontWeight(.semibold)
 
-                    ProgressView(value: session.progress)
+                    ProgressView(value: session?.progress ?? 0.0)
                         .progressViewStyle(.linear)
                         .frame(height: 8)
                         .tint(.blue)
@@ -135,6 +134,8 @@ struct PlayerView: View {
                 }
                 .accessibilityLabel("Skip to next play")
             }
+            .disabled(session == nil)
+            .opacity(session == nil ? 0.5 : 1.0)
 
             // Play Count Info
             VStack(spacing: 12) {
@@ -145,7 +146,7 @@ struct PlayerView: View {
                         Text("Plays")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Text("\(session.startingSystemPlayCount)")
+                        Text("\(session?.startingSystemPlayCount ?? 0)")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
@@ -157,7 +158,7 @@ struct PlayerView: View {
                         Text("In-App Plays")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Text("+\(session.completedPlays)")
+                        Text("+\(session?.completedPlays ?? 0)")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
@@ -170,7 +171,7 @@ struct PlayerView: View {
                         Text("Target")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Text("\(session.targetPlays)")
+                        Text("\(session?.targetPlays ?? 0)")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
