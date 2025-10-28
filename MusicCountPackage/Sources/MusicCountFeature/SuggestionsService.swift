@@ -15,17 +15,17 @@ final class SuggestionsService: Sendable {
     var activeSuggestions: [Suggestion] {
         allSuggestions
             .compactMap { suggestion in
-                let titleKey = normalizeTitle(suggestion.sharedTitle)
+                let groupKey = "\(normalizeTitle(suggestion.sharedTitle))-\(normalizeArtist(suggestion.sharedArtist))"
 
                 // Check if entire group was dismissed
-                if dismissedKeys.contains("\(titleKey)-ENTIRE_GROUP") {
+                if dismissedKeys.contains("\(groupKey)-ENTIRE_GROUP") {
                     return nil
                 }
 
                 // Filter out individually dismissed songs
                 var filtered = suggestion
                 filtered.songs = suggestion.songs.filter { song in
-                    !dismissedKeys.contains("\(titleKey)-\(song.id)")
+                    !dismissedKeys.contains("\(groupKey)-\(song.id)")
                 }
 
                 // Only show if 2+ versions remain
@@ -35,41 +35,43 @@ final class SuggestionsService: Sendable {
     }
 
     func analyzeSongs(_ songs: [SongInfo]) {
-        // Group songs by normalized title
-        var titleGroups: [String: [SongInfo]] = [:]
+        // Group songs by normalized title AND artist
+        var titleArtistGroups: [String: [SongInfo]] = [:]
 
         for song in songs {
-            let normalizedTitle = normalizeTitle(song.title)
-            titleGroups[normalizedTitle, default: []].append(song)
+            let groupKey = "\(normalizeTitle(song.title))-\(normalizeArtist(song.artist))"
+            titleArtistGroups[groupKey, default: []].append(song)
         }
 
         // Create suggestions for groups with 2+ versions
-        allSuggestions = titleGroups.compactMap { title, songsInGroup in
+        allSuggestions = titleArtistGroups.compactMap { _, songsInGroup in
             guard songsInGroup.count >= 2 else { return nil }
 
-            // Use the first song's original title as the shared title
+            // Use the first song's original title and artist as the shared values
             let sharedTitle = songsInGroup[0].title
+            let sharedArtist = songsInGroup[0].artist
 
             // Sort by play count for consistent ordering
             let sortedSongs = songsInGroup.sorted { $0.playCount < $1.playCount }
 
             return Suggestion(
                 sharedTitle: sharedTitle,
+                sharedArtist: sharedArtist,
                 songs: sortedSongs
             )
         }
     }
 
     /// Dismiss individual song (only allowed when 3+ songs in group)
-    func dismissSong(title: String, songId: UInt64) {
-        let key = "\(normalizeTitle(title))-\(songId)"
+    func dismissSong(title: String, artist: String, songId: UInt64) {
+        let key = "\(normalizeTitle(title))-\(normalizeArtist(artist))-\(songId)"
         dismissedKeys.insert(key)
         saveDismissedKeys()
     }
 
     /// Dismiss entire suggestion group (used for 2-song groups)
-    func dismissEntireGroup(title: String) {
-        let key = "\(normalizeTitle(title))-ENTIRE_GROUP"
+    func dismissEntireGroup(title: String, artist: String) {
+        let key = "\(normalizeTitle(title))-\(normalizeArtist(artist))-ENTIRE_GROUP"
         dismissedKeys.insert(key)
         saveDismissedKeys()
     }
@@ -82,6 +84,10 @@ final class SuggestionsService: Sendable {
 
     private func normalizeTitle(_ title: String) -> String {
         title.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func normalizeArtist(_ artist: String) -> String {
+        artist.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func loadDismissedKeys() {

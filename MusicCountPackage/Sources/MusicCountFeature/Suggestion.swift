@@ -3,11 +3,13 @@ import Foundation
 struct Suggestion: Identifiable, Equatable, Sendable {
     let id: UUID
     let sharedTitle: String
+    let sharedArtist: String
     var songs: [SongInfo]
 
-    init(id: UUID = UUID(), sharedTitle: String, songs: [SongInfo]) {
+    init(id: UUID = UUID(), sharedTitle: String, sharedArtist: String, songs: [SongInfo]) {
         self.id = id
         self.sharedTitle = sharedTitle
+        self.sharedArtist = sharedArtist
         self.songs = songs
     }
 

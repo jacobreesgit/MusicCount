@@ -4,7 +4,6 @@ import SwiftUI
 struct SuggestionsTabView: View {
     @Environment(SuggestionsService.self) private var suggestionsService
     @State private var selectedSuggestion: Suggestion?
-    @State private var showingComparison = false
     @State private var sortOption: SuggestionSortOption = .playCountDifference
     @State private var searchText = ""
     @Binding var selectedTab: Int
@@ -49,18 +48,19 @@ struct SuggestionsTabView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingComparison) {
-            if let suggestion = selectedSuggestion {
-                NavigationStack {
-                    ComparisonView(
-                        song1: suggestion.lowestPlayCount,
-                        song2: suggestion.highestPlayCount,
-                        showingComparison: $showingComparison,
-                        selectedTab: $selectedTab
-                    )
-                }
-                .presentationDetents([.medium, .large])
+        .sheet(item: $selectedSuggestion) { suggestion in
+            NavigationStack {
+                ComparisonView(
+                    song1: suggestion.lowestPlayCount,
+                    song2: suggestion.highestPlayCount,
+                    showingComparison: Binding(
+                        get: { selectedSuggestion != nil },
+                        set: { if !$0 { selectedSuggestion = nil } }
+                    ),
+                    selectedTab: $selectedTab
+                )
             }
+            .presentationDetents([.medium, .large])
         }
     }
 
@@ -73,7 +73,6 @@ struct SuggestionsTabView: View {
                         ForEach(suggestion.songs) { song in
                             Button {
                                 selectedSuggestion = suggestion
-                                showingComparison = true
                             } label: {
                                 SongRowView(song: song, selectionSlot: nil)
                             }
@@ -83,6 +82,7 @@ struct SuggestionsTabView: View {
                                     withAnimation(.easeOut) {
                                         suggestionsService.dismissSong(
                                             title: suggestion.sharedTitle,
+                                            artist: suggestion.sharedArtist,
                                             songId: song.id
                                         )
                                     }
@@ -97,14 +97,14 @@ struct SuggestionsTabView: View {
                             suggestion: suggestion,
                             onTap: {
                                 selectedSuggestion = suggestion
-                                showingComparison = true
                             }
                         )
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 withAnimation(.easeOut) {
                                     suggestionsService.dismissEntireGroup(
-                                        title: suggestion.sharedTitle
+                                        title: suggestion.sharedTitle,
+                                        artist: suggestion.sharedArtist
                                     )
                                 }
                             } label: {

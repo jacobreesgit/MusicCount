@@ -86,8 +86,8 @@ struct LibraryTabView: View {
                 .scaleEffect(1.5)
 
             Text("Requesting Permission")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
 
             Text("Please allow access to your music library when prompted.")
                 .multilineTextAlignment(.center)
