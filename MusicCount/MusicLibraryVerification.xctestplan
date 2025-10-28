@@ -18,9 +18,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:MusicLibraryVerificationPackage",
-        "identifier" : "MusicLibraryVerificationFeatureTests",
-        "name" : "MusicLibraryVerificationFeatureTests"
+        "containerPath" : "container:MusicCountPackage",
+        "identifier" : "MusicCountFeatureTests",
+        "name" : "MusicCountFeatureTests"
       }
     },
     {

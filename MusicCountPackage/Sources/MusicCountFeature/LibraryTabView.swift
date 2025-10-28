@@ -259,6 +259,8 @@ struct LibraryTabView: View {
                     showingComparison = true
                 }
             )
+            .opacity(showingComparison ? 0 : 1)
+            .animation(.easeInOut(duration: 0.3), value: showingComparison)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

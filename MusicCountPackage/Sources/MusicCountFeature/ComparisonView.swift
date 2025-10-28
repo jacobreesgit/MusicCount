@@ -54,9 +54,7 @@ struct ComparisonView: View {
                     .accessibilityElement(children: .combine)
 
                 // Matching Buttons
-                if difference != 0 {
-                    matchingButtonsSection
-                }
+                matchingButtonsSection
             }
             .padding()
         }
@@ -270,6 +268,7 @@ struct ComparisonView: View {
 
             VStack(spacing: 12) {
                 // Match Mode Button
+                let isMatchModeDisabled = difference == 0
                 Button {
                     selectedMatchMode = .match
                     let targetPlays = higherSong.playCount
@@ -293,24 +292,34 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        Text("Play \"\(lowerSong.title)\" \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
+                        if isMatchModeDisabled {
+                            Text("Songs already have matching play counts")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        } else {
+                            Text("Play \"\(lowerSong.title)\" \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                    .background(isMatchModeDisabled ? .gray.opacity(0.1) : .blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
+                .disabled(isMatchModeDisabled)
+                .opacity(isMatchModeDisabled ? 0.6 : 1.0)
 
                 // Add Mode Button
+                let isAddModeDisabled = higherSong.playCount == 0
+                let addModeTargetPlays = higherSong.playCount
                 Button {
                     selectedMatchMode = .add
-                    let difference = abs(song1.playCount - song2.playCount)
                     playerService.startMatchingSession(
                         song: lowerSong,
-                        targetPlays: difference,
+                        targetPlays: addModeTargetPlays,
                         mode: .add
                     )
                     showingPlayer = true
@@ -327,17 +336,25 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        let difference = abs(song1.playCount - song2.playCount)
-                        Text("Play \"\(lowerSong.title)\" \(difference) times to reach \(lowerSong.playCount + difference) plays")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
+                        if isAddModeDisabled {
+                            Text("No plays to add")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        } else {
+                            Text("Play \"\(lowerSong.title)\" \(addModeTargetPlays) times to reach \(lowerSong.playCount + addModeTargetPlays) plays")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                    .background(isAddModeDisabled ? .gray.opacity(0.1) : .green.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
+                .disabled(isAddModeDisabled)
+                .opacity(isAddModeDisabled ? 0.6 : 1.0)
             }
 
             Text("Note: Play counts update when you fully close and reopen the app")
