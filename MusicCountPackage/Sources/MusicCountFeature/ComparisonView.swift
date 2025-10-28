@@ -40,7 +40,7 @@ struct ComparisonView: View {
                             .frame(width: 1)
                             .foregroundStyle(.secondary.opacity(0.3))
                     }
-                    .frame(width: 40)
+                    .frame(width: 60)
                     .accessibilityHidden(true)
 
                     // Song 2 Card
@@ -48,10 +48,6 @@ struct ComparisonView: View {
                         .frame(maxWidth: .infinity)
                         .accessibilityLabel("Song 2: \(song2.title) by \(song2.artist), \(song2.playCount) plays")
                 }
-
-                // Play Count Comparison
-                playCountComparisonSection
-                    .accessibilityElement(children: .combine)
 
                 // Matching Buttons
                 matchingButtonsSection
@@ -116,12 +112,13 @@ struct ComparisonView: View {
                 Text(song.title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .foregroundStyle(.white)
 
                 Text(song.artist)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white)
                     .lineLimit(1)
             }
 
@@ -135,15 +132,29 @@ struct ComparisonView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                     .fontDesign(.rounded)
+                    .foregroundStyle(.white)
 
                 Text("plays")
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white)
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .background {
+            ZStack {
+                if let artworkImage = song.artworkImage {
+                    Image(uiImage: artworkImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Color.gray.opacity(0.2)
+                }
+                Rectangle()
+                    .fill(.black.opacity(0.55))
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: - Play Count Comparison
@@ -259,6 +270,17 @@ struct ComparisonView: View {
         song1.playCount > song2.playCount ? song1 : song2
     }
 
+    private var lowerSongLabel: String {
+        if song1.title == song2.title {
+            // Same title, need to distinguish by number
+            let songNumber = lowerSong.id == song1.id ? "Song 1" : "Song 2"
+            return "\(lowerSong.title) (\(songNumber))"
+        } else {
+            // Different titles, just show the title
+            return lowerSong.title
+        }
+    }
+
     // MARK: - Matching Buttons Section
 
     private var matchingButtonsSection: some View {
@@ -298,7 +320,7 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Play \"\(lowerSong.title)\" \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
+                            Text("Play \(lowerSongLabel) \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
@@ -342,7 +364,7 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Play \"\(lowerSong.title)\" \(addModeTargetPlays) times to reach \(lowerSong.playCount + addModeTargetPlays) plays")
+                            Text("Play \(lowerSongLabel) \(addModeTargetPlays) times to reach \(lowerSong.playCount + addModeTargetPlays) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
