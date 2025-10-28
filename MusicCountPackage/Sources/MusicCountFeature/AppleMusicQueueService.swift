@@ -1,5 +1,6 @@
 import MediaPlayer
 import Observation
+import SwiftUI
 
 @MainActor
 @Observable
@@ -32,10 +33,31 @@ final class AppleMusicQueueService {
         // Create queue descriptor with store IDs
         let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: storeIDs)
 
-        // Append to the system music player's queue
-        systemPlayer.append(descriptor)
+        // Get user's queue behavior preference
+        let behaviorRawValue = UserDefaults.standard.string(forKey: "queueBehavior") ?? QueueBehavior.insertNext.rawValue
+        let behavior = QueueBehavior(rawValue: behaviorRawValue) ?? .insertNext
 
-        // Activate the queue by playing
-        systemPlayer.play()
+        // Apply the appropriate queue method based on user preference
+        switch behavior {
+        case .replaceQueue:
+            // Replace entire queue and start playing
+            systemPlayer.setQueue(with: descriptor)
+            systemPlayer.prepareToPlay { [weak self] error in
+                guard error == nil else { return }
+                Task { @MainActor in
+                    self?.systemPlayer.play()
+                }
+            }
+
+        case .appendToEnd:
+            // Add to end of existing queue
+            systemPlayer.append(descriptor)
+            systemPlayer.play()
+
+        case .insertNext:
+            // Insert after current song (plays next)
+            systemPlayer.prepend(descriptor)
+            systemPlayer.play()
+        }
     }
 }

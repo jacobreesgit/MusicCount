@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(SuggestionsService.self) private var suggestionsService
     @State private var showingResetAlert = false
+    @AppStorage("queueBehavior") private var queueBehavior: QueueBehavior = .insertNext
 
     var body: some View {
         Form {
@@ -31,15 +32,29 @@ struct SettingsView: View {
             }
 
             Section {
-                HStack {
-                    Text("Version")
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Text(appVersion)
-                        .foregroundStyle(.secondary)
+                Picker(selection: $queueBehavior) {
+                    ForEach(QueueBehavior.allCases) { behavior in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Image(systemName: behavior.icon)
+                                Text(behavior.displayName)
+                                    .font(.body)
+                            }
+                        }
+                        .tag(behavior)
+                    }
+                } label: {
+                    EmptyView()
                 }
+                .pickerStyle(.inline)
             } header: {
-                Text("App Information")
+                Text("Queue Behavior")
+            } footer: {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Choose how songs are added to your Apple Music queue when matching play counts.")
+
+                    Text(queueBehavior.description)
+                }
             }
 
             Section {
@@ -91,11 +106,5 @@ struct SettingsView: View {
         } message: {
             Text("All previously dismissed songs and suggestion groups will appear again in the Suggestions tab.")
         }
-    }
-
-    // MARK: - Helper Properties
-
-    private var appVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 }
