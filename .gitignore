@@ -5,6 +5,14 @@
 ## User settings
 xcuserdata/
 
+## macOS
+.DS_Store
+
+## Screenshots and temp images (exclude from root, allow in Assets.xcassets)
+/*.png
+/*.jpg
+/*.jpeg
+
 ## Obj-C/Swift specific
 *.hmap
 
