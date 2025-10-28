@@ -250,8 +250,7 @@ struct LibraryTabView: View {
         .scrollContentBackground(.hidden)
         .background(Color(.systemGroupedBackground))
         .contentMargins(.top, 0, for: .scrollContent)
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search songs")
-        .toolbarBackground(.visible, for: .navigationBar)
+        .searchable(text: $searchText, placement: .automatic, prompt: "Search songs")
         .overlay(alignment: .bottom) {
             FloatingActionButton(
                 selectedCount: selectionCount,
