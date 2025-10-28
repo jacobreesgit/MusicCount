@@ -7,6 +7,7 @@ struct LibraryTabView: View {
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
     @State private var sortOption: SortOption = .playCountDescending
+    @State private var searchText = ""
 
     var body: some View {
         NavigationStack {
@@ -177,7 +178,7 @@ struct LibraryTabView: View {
 
     private func libraryView(songs: [SongInfo]) -> some View {
         List {
-            ForEach(sortOption.sorted(songs)) { song in
+            ForEach(filteredSongs(from: songs)) { song in
                 SongRowView(
                     song: song,
                     selectionSlot: selectionSlot(for: song)
@@ -246,6 +247,11 @@ struct LibraryTabView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color(.systemGroupedBackground))
+        .contentMargins(.top, 0, for: .scrollContent)
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search songs")
+        .toolbarBackground(.visible, for: .navigationBar)
         .overlay(alignment: .bottom) {
             FloatingActionButton(
                 selectedCount: selectionCount,
@@ -305,5 +311,21 @@ struct LibraryTabView: View {
         if selectedSong1 != nil { count += 1 }
         if selectedSong2 != nil { count += 1 }
         return count
+    }
+
+    private func filteredSongs(from songs: [SongInfo]) -> [SongInfo] {
+        var filtered = songs
+
+        // Apply search filter
+        if !searchText.isEmpty {
+            filtered = filtered.filter { song in
+                song.title.localizedStandardContains(searchText) ||
+                song.artist.localizedStandardContains(searchText) ||
+                song.album.localizedStandardContains(searchText)
+            }
+        }
+
+        // Apply sorting
+        return sortOption.sorted(filtered)
     }
 }
