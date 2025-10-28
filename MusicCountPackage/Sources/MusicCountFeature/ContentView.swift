@@ -7,6 +7,7 @@ public struct ContentView: View {
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
     @State private var sortOption: SortOption = .playCountDescending
+    @State private var selectedTab = 0
 
     public var body: some View {
         NavigationStack {
@@ -55,19 +56,25 @@ public struct ContentView: View {
             .sheet(isPresented: $showingComparison) {
                 if let song1 = selectedSong1, let song2 = selectedSong2 {
                     NavigationStack {
-                        ComparisonView(song1: song1, song2: song2)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
-                                        showingComparison = false
-                                    }
+                        ComparisonView(
+                            song1: song1,
+                            song2: song2,
+                            showingComparison: $showingComparison,
+                            selectedTab: $selectedTab
+                        )
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") {
+                                    showingComparison = false
                                 }
                             }
+                        }
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                 }
             }
+            .environment(playerService)
         }
     }
 

@@ -1,16 +1,7 @@
 import SwiftUI
 
 struct PlayerView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var playerService: MusicPlayerService
-    let song: SongInfo
-    let currentSystemPlayCount: Int
-
-    init(playerService: MusicPlayerService, song: SongInfo, currentSystemPlayCount: Int) {
-        self.playerService = playerService
-        self.song = song
-        self.currentSystemPlayCount = currentSystemPlayCount
-    }
+    @Environment(MusicPlayerService.self) private var playerService
 
     var body: some View {
         ZStack {
@@ -30,13 +21,10 @@ struct PlayerView: View {
                 }
             }
         }
-        .navigationTitle("Play Count Matching")
-        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Clear Session") {
                     playerService.cancelSession()
-                    dismiss()
                 }
             }
         }
@@ -157,7 +145,7 @@ struct PlayerView: View {
                         Text("System Plays")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Text("\(currentSystemPlayCount)")
+                        Text("\(session.startingSystemPlayCount)")
                             .font(.title3)
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
@@ -243,7 +231,6 @@ struct PlayerView: View {
 
             Button {
                 playerService.completeSession()
-                dismiss()
             } label: {
                 Label("Done", systemImage: "checkmark")
                     .frame(maxWidth: .infinity)

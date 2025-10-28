@@ -257,8 +257,11 @@ final class MusicPlayerService {
             print("📊 System play count increased by \(systemPlayCountIncrease)")
             print("📊 In-app plays completed: \(session.completedPlays)")
 
+            // Calculate the expected final count
+            let expectedFinalCount = session.startingSystemPlayCount + session.targetPlays
+
             // Verify if we've reached the goal
-            if updatedSong.playCount >= session.targetPlays {
+            if updatedSong.playCount >= expectedFinalCount {
                 // Goal reached!
                 print("✅ Goal reached! Clearing session.")
                 completeSession()

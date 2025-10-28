@@ -3,10 +3,10 @@ import SwiftUI
 struct ComparisonView: View {
     let song1: SongInfo
     let song2: SongInfo
+    @Binding var showingComparison: Bool
+    @Binding var selectedTab: Int
 
-    @State private var playerService = MusicPlayerService()
-    @State private var showingPlayer = false
-    @State private var selectedMatchMode: MatchingSession.Mode?
+    @Environment(MusicPlayerService.self) private var playerService
 
     var body: some View {
         ScrollView {
@@ -56,17 +56,6 @@ struct ComparisonView: View {
         }
         .navigationTitle("Comparison")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingPlayer) {
-            if selectedMatchMode != nil {
-                NavigationStack {
-                    PlayerView(
-                        playerService: playerService,
-                        song: lowerSong,
-                        currentSystemPlayCount: lowerSong.playCount
-                    )
-                }
-            }
-        }
     }
 
     // MARK: - Comparison Summary
@@ -292,7 +281,6 @@ struct ComparisonView: View {
                 // Match Mode Button
                 let isMatchModeDisabled = difference == 0
                 Button {
-                    selectedMatchMode = .match
                     let targetPlays = higherSong.playCount
                     let playsNeeded = targetPlays - lowerSong.playCount
                     playerService.startMatchingSession(
@@ -300,7 +288,8 @@ struct ComparisonView: View {
                         targetPlays: playsNeeded,
                         mode: .match
                     )
-                    showingPlayer = true
+                    showingComparison = false
+                    selectedTab = 1
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -338,13 +327,13 @@ struct ComparisonView: View {
                 let isAddModeDisabled = higherSong.playCount == 0
                 let addModeTargetPlays = higherSong.playCount
                 Button {
-                    selectedMatchMode = .add
                     playerService.startMatchingSession(
                         song: lowerSong,
                         targetPlays: addModeTargetPlays,
                         mode: .add
                     )
-                    showingPlayer = true
+                    showingComparison = false
+                    selectedTab = 1
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {

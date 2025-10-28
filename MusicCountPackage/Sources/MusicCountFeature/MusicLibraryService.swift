@@ -87,11 +87,7 @@ final class MusicLibraryService {
             }
         }.value
 
-        if songs.isEmpty {
-            loadingState = .error("No songs found in library. This could mean:\n• No locally stored music on device\n• Only Apple Music streaming content (not accessible)\n• Music library is empty")
-        } else {
-            loadingState = .loaded(songs)
-        }
+        loadingState = .loaded(songs)
     }
 
     // MARK: - Private Helpers

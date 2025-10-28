@@ -2,12 +2,13 @@ import SwiftUI
 
 struct LibraryTabView: View {
     @State private var service = MusicLibraryService()
-    @State private var playerService = MusicPlayerService()
+    @Environment(MusicPlayerService.self) private var playerService
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
     @State private var sortOption: SortOption = .playCountDescending
     @State private var searchText = ""
+    @Binding var selectedTab: Int
 
     var body: some View {
         NavigationStack {
@@ -54,14 +55,19 @@ struct LibraryTabView: View {
             .sheet(isPresented: $showingComparison) {
                 if let song1 = selectedSong1, let song2 = selectedSong2 {
                     NavigationStack {
-                        ComparisonView(song1: song1, song2: song2)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
-                                        showingComparison = false
-                                    }
+                        ComparisonView(
+                            song1: song1,
+                            song2: song2,
+                            showingComparison: $showingComparison,
+                            selectedTab: $selectedTab
+                        )
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") {
+                                    showingComparison = false
                                 }
                             }
+                        }
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
@@ -146,7 +152,7 @@ struct LibraryTabView: View {
                 .scaleEffect(1.5)
 
             Text("Loading Music Library...")
-                .font(.title3)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
     }

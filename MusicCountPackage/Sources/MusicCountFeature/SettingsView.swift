@@ -8,7 +8,7 @@ struct SettingsView: View {
                 VStack(spacing: 16) {
                     // App Icon
                     Image(systemName: "music.note.list")
-                        .font(.system(size: 60))
+                        .font(.system(size: 80))
                         .foregroundStyle(.blue.gradient)
                         .padding(.top, 8)
 
