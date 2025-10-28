@@ -3,6 +3,7 @@ import SwiftUI
 struct LibraryTabView: View {
     @State private var service = MusicLibraryService()
     @Environment(MusicPlayerService.self) private var playerService
+    @Environment(SuggestionsService.self) private var suggestionsService
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
@@ -50,6 +51,7 @@ struct LibraryTabView: View {
                 // Reconcile play counts when library loads
                 if case .loaded(let songs) = newState {
                     playerService.reconcilePlayCounts(currentLibrarySongs: songs)
+                    suggestionsService.analyzeSongs(songs)
                 }
             }
             .sheet(isPresented: $showingComparison) {
