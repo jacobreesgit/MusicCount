@@ -6,7 +6,9 @@ struct ComparisonView: View {
     @Binding var showingComparison: Bool
     @Binding var selectedTab: Int
 
-    @Environment(MusicPlayerService.self) private var playerService
+    @Environment(AppleMusicQueueService.self) private var queueService
+    @State private var showingSuccessAlert = false
+    @State private var queuedCount = 0
 
     var body: some View {
         ScrollView {
@@ -56,6 +58,13 @@ struct ComparisonView: View {
         }
         .navigationTitle("Comparison")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Added to Apple Music Queue", isPresented: $showingSuccessAlert) {
+            Button("OK") {
+                showingComparison = false
+            }
+        } message: {
+            Text("\(queuedCount) copies of \(lowerSong.title) have been added to your Apple Music queue. Open the Music app to start playback.")
+        }
     }
 
     // MARK: - Comparison Summary
@@ -275,22 +284,21 @@ struct ComparisonView: View {
 
     private var matchingButtonsSection: some View {
         VStack(spacing: 16) {
-            Text("Match Play Counts")
+            Text("Add to Apple Music Queue")
                 .font(.headline)
 
             VStack(spacing: 12) {
                 // Match Mode Button
                 let isMatchModeDisabled = difference == 0
                 Button {
-                    let targetPlays = higherSong.playCount
-                    let playsNeeded = targetPlays - lowerSong.playCount
-                    playerService.startMatchingSession(
-                        song: lowerSong,
-                        targetPlays: playsNeeded,
-                        mode: .match
-                    )
-                    showingComparison = false
-                    selectedTab = 1
+                    let playsNeeded = higherSong.playCount - lowerSong.playCount
+                    do {
+                        try queueService.addToQueue(song: lowerSong, count: playsNeeded)
+                        queuedCount = playsNeeded
+                        showingSuccessAlert = true
+                    } catch {
+                        // Handle error silently for now
+                    }
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -310,7 +318,7 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Play \(lowerSongLabel) \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
+                            Text("Add \(lowerSongLabel) \(higherSong.playCount - lowerSong.playCount) times to Apple Music queue to reach \(higherSong.playCount) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
@@ -328,13 +336,13 @@ struct ComparisonView: View {
                 let isAddModeDisabled = higherSong.playCount == 0
                 let addModeTargetPlays = higherSong.playCount
                 Button {
-                    playerService.startMatchingSession(
-                        song: lowerSong,
-                        targetPlays: addModeTargetPlays,
-                        mode: .add
-                    )
-                    showingComparison = false
-                    selectedTab = 1
+                    do {
+                        try queueService.addToQueue(song: lowerSong, count: addModeTargetPlays)
+                        queuedCount = addModeTargetPlays
+                        showingSuccessAlert = true
+                    } catch {
+                        // Handle error silently for now
+                    }
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -354,7 +362,7 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Play \(lowerSongLabel) \(addModeTargetPlays) times to reach \(lowerSong.playCount + addModeTargetPlays) plays")
+                            Text("Add \(lowerSongLabel) \(addModeTargetPlays) times to Apple Music queue to reach \(lowerSong.playCount + addModeTargetPlays) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)

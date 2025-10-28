@@ -2,7 +2,6 @@ import SwiftUI
 
 struct LibraryTabView: View {
     @State private var service = MusicLibraryService()
-    @Environment(MusicPlayerService.self) private var playerService
     @Environment(SuggestionsService.self) private var suggestionsService
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?

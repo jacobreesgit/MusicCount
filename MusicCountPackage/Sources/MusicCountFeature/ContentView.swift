@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct ContentView: View {
     @State private var service = MusicLibraryService()
-    @State private var playerService = MusicPlayerService()
+    @State private var queueService = AppleMusicQueueService()
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
@@ -68,7 +68,7 @@ public struct ContentView: View {
                     .presentationDragIndicator(.visible)
                 }
             }
-            .environment(playerService)
+            .environment(queueService)
         }
     }
 
