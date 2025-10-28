@@ -68,6 +68,10 @@ final class MusicLibraryService {
                 let playCount = item.playCount
                 let hasAssetURL = item.assetURL != nil
                 let mediaType = Self.mediaTypeDescription(item.mediaType)
+                let duration = item.playbackDuration
+
+                // Extract artwork image at 50x50pt size
+                let artworkImage = item.artwork?.image(at: CGSize(width: 50, height: 50))
 
                 return SongInfo(
                     id: persistentID,
@@ -76,7 +80,9 @@ final class MusicLibraryService {
                     album: album,
                     playCount: playCount,
                     hasAssetURL: hasAssetURL,
-                    mediaType: mediaType
+                    mediaType: mediaType,
+                    duration: duration,
+                    artworkImage: artworkImage
                 )
             }
         }.value

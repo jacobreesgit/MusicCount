@@ -184,7 +184,6 @@ public struct ContentView: View {
                     song: song,
                     selectionSlot: selectionSlot(for: song)
                 )
-                .accessibilityLabel("\(song.title) by \(song.artist), \(song.playCount) plays")
                 .swipeActions(edge: .leading) {
                     Button {
                         if selectedSong1?.id == song.id {

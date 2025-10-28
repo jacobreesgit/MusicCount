@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// Represents song information extracted from MPMediaLibrary
 struct SongInfo: Identifiable, Sendable, Equatable {
@@ -9,6 +10,8 @@ struct SongInfo: Identifiable, Sendable, Equatable {
     let playCount: Int
     let hasAssetURL: Bool
     let mediaType: String
+    let duration: TimeInterval
+    let artworkImage: UIImage?
 
     init(
         id: UInt64,
@@ -17,7 +20,9 @@ struct SongInfo: Identifiable, Sendable, Equatable {
         album: String,
         playCount: Int,
         hasAssetURL: Bool,
-        mediaType: String
+        mediaType: String,
+        duration: TimeInterval,
+        artworkImage: UIImage? = nil
     ) {
         self.id = id
         self.title = title
@@ -26,6 +31,49 @@ struct SongInfo: Identifiable, Sendable, Equatable {
         self.playCount = playCount
         self.hasAssetURL = hasAssetURL
         self.mediaType = mediaType
+        self.duration = duration
+        self.artworkImage = artworkImage
+    }
+
+    /// Formatted duration string (M:SS or H:MM:SS)
+    var formattedDuration: String {
+        let totalSeconds = Int(duration)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%d:%02d", minutes, seconds)
+        }
+    }
+
+    /// Formatted duration for accessibility (e.g., "3 minutes 45 seconds")
+    var accessibleDuration: String {
+        let totalSeconds = Int(duration)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+
+        var components: [String] = []
+
+        if hours > 0 {
+            components.append("\(hours) \(hours == 1 ? "hour" : "hours")")
+        }
+        if minutes > 0 {
+            components.append("\(minutes) \(minutes == 1 ? "minute" : "minutes")")
+        }
+        if seconds > 0 || components.isEmpty {
+            components.append("\(seconds) \(seconds == 1 ? "second" : "seconds")")
+        }
+
+        return components.joined(separator: " ")
+    }
+
+    /// Whether artwork is available
+    var hasArtwork: Bool {
+        artworkImage != nil
     }
 }
 
