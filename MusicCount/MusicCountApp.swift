@@ -1,8 +1,8 @@
 import SwiftUI
-import MusicLibraryVerificationFeature
+import MusicCountFeature
 
 @main
-struct MusicLibraryVerificationApp: App {
+struct MusicCountApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

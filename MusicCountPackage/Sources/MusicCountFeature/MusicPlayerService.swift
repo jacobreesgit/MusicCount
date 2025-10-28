@@ -73,6 +73,9 @@ final class MusicPlayerService {
 
         playerState = .loading
 
+        // Activate audio session before playing
+        activateAudioSession()
+
         // Set up the player with this song
         let collection = MPMediaItemCollection(items: [mediaItem])
         player.setQueue(with: collection)
@@ -115,6 +118,9 @@ final class MusicPlayerService {
         timeObserver?.cancel()
         timeObserver = nil
         playerState = .idle
+
+        // Deactivate audio session to allow other audio to resume
+        deactivateAudioSession()
     }
 
     // MARK: - Time Observer
@@ -185,10 +191,29 @@ final class MusicPlayerService {
 
     private nonisolated func configureAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
+            // Configure for exclusive playback - takes over audio when playing
+            try AVAudioSession.sharedInstance().setCategory(
+                .playback,
+                mode: .default
+            )
         } catch {
             print("Failed to configure audio session: \(error)")
+        }
+    }
+
+    private nonisolated func activateAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to activate audio session: \(error)")
+        }
+    }
+
+    private nonisolated func deactivateAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("Failed to deactivate audio session: \(error)")
         }
     }
 

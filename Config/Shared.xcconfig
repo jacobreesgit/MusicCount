@@ -6,9 +6,9 @@
 // ==========================================
 // Project Identity
 // ==========================================
-PRODUCT_NAME = MusicLibraryVerification
-PRODUCT_DISPLAY_NAME = Music Library Test
-PRODUCT_BUNDLE_IDENTIFIER = com.verification.musiclibrary
+PRODUCT_NAME = MusicCount
+PRODUCT_DISPLAY_NAME = MusicCount
+PRODUCT_BUNDLE_IDENTIFIER = com.musiccount.app
 MARKETING_VERSION = 1.0
 CURRENT_PROJECT_VERSION = 1
 
@@ -37,5 +37,5 @@ DEVELOPMENT_TEAM =
 // ==========================================
 // Entitlements
 // ==========================================
-// AI agents can modify Config/MusicLibraryVerification.entitlements to add capabilities
-CODE_SIGN_ENTITLEMENTS = Config/MusicLibraryVerification.entitlements
+// AI agents can modify Config/MusicCount.entitlements to add capabilities
+CODE_SIGN_ENTITLEMENTS = Config/MusicCount.entitlements

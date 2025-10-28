@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B41F6832DEDD23B001A66F9 /* MusicLibraryVerificationFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 8B41F6822DEDD23B001A66F9 /* MusicLibraryVerificationFeature */; };
-		8B41F6852DEDD25C001A66F9 /* MusicLibraryVerificationFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 8B41F6842DEDD25C001A66F9 /* MusicLibraryVerificationFeature */; };
+		8B41F6832DEDD23B001A66F9 /* MusicCountFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 8B41F6822DEDD23B001A66F9 /* MusicCountFeature */; };
+		8B41F6852DEDD25C001A66F9 /* MusicCountFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 8B41F6842DEDD25C001A66F9 /* MusicCountFeature */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -22,8 +22,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8B41F6452DEDD0D5001A66F9 /* MusicLibraryVerification.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MusicLibraryVerification.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8B41F65C2DEDD0D6001A66F9 /* MusicLibraryVerification.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MusicLibraryVerification.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B41F6452DEDD0D5001A66F9 /* MusicCount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MusicCount.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B41F65C2DEDD0D6001A66F9 /* MusicCount.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MusicCount.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -40,14 +40,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8B41F6472DEDD0D5001A66F9 /* MusicLibraryVerification */ = {
+		8B41F6472DEDD0D5001A66F9 /* MusicCount */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MusicLibraryVerification;
+			path = MusicCount;
 			sourceTree = "<group>";
 		};
-		8B41F65F2DEDD0D6001A66F9 /* MusicLibraryVerificationUITests */ = {
+		8B41F65F2DEDD0D6001A66F9 /* MusicCountUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MusicLibraryVerificationUITests;
+			path = MusicCountUITests;
 			sourceTree = "<group>";
 		};
 		8BD71C052DEE41D800CEDD92 /* Config */ = {
@@ -65,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B41F6852DEDD25C001A66F9 /* MusicLibraryVerificationFeature in Frameworks */,
+				8B41F6852DEDD25C001A66F9 /* MusicCountFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,7 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B41F6832DEDD23B001A66F9 /* MusicLibraryVerificationFeature in Frameworks */,
+				8B41F6832DEDD23B001A66F9 /* MusicCountFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,8 +84,8 @@
 			isa = PBXGroup;
 			children = (
 				8BD71C052DEE41D800CEDD92 /* Config */,
-				8B41F6472DEDD0D5001A66F9 /* MusicLibraryVerification */,
-				8B41F65F2DEDD0D6001A66F9 /* MusicLibraryVerificationUITests */,
+				8B41F6472DEDD0D5001A66F9 /* MusicCount */,
+				8B41F65F2DEDD0D6001A66F9 /* MusicCountUITests */,
 				8B41F6812DEDD23B001A66F9 /* Frameworks */,
 				8B41F6462DEDD0D5001A66F9 /* Products */,
 			);
@@ -94,8 +94,8 @@
 		8B41F6462DEDD0D5001A66F9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8B41F6452DEDD0D5001A66F9 /* MusicLibraryVerification.app */,
-				8B41F65C2DEDD0D6001A66F9 /* MusicLibraryVerification.xctest */,
+				8B41F6452DEDD0D5001A66F9 /* MusicCount.app */,
+				8B41F65C2DEDD0D6001A66F9 /* MusicCount.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,15 +123,15 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8B41F6472DEDD0D5001A66F9 /* MusicLibraryVerification */,
+				8B41F6472DEDD0D5001A66F9 /* MusicCount */,
 				8BD71C052DEE41D800CEDD92 /* Config */,
 			);
 			name = MusicLibraryVerification;
 			packageProductDependencies = (
-				8B41F6842DEDD25C001A66F9 /* MusicLibraryVerificationFeature */,
+				8B41F6842DEDD25C001A66F9 /* MusicCountFeature */,
 			);
 			productName = MusicLibraryVerification;
-			productReference = 8B41F6452DEDD0D5001A66F9 /* MusicLibraryVerification.app */;
+			productReference = 8B41F6452DEDD0D5001A66F9 /* MusicCount.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8B41F65B2DEDD0D6001A66F9 /* MusicLibraryVerificationUITests */ = {
@@ -148,14 +148,14 @@
 				8B41F65E2DEDD0D6001A66F9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8B41F65F2DEDD0D6001A66F9 /* MusicLibraryVerificationUITests */,
+				8B41F65F2DEDD0D6001A66F9 /* MusicCountUITests */,
 			);
 			name = MusicLibraryVerificationUITests;
 			packageProductDependencies = (
-				8B41F6822DEDD23B001A66F9 /* MusicLibraryVerificationFeature */,
+				8B41F6822DEDD23B001A66F9 /* MusicCountFeature */,
 			);
 			productName = MusicLibraryVerificationUITests;
-			productReference = 8B41F65C2DEDD0D6001A66F9 /* MusicLibraryVerification.xctest */;
+			productReference = 8B41F65C2DEDD0D6001A66F9 /* MusicCount.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -472,13 +472,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8B41F6822DEDD23B001A66F9 /* MusicLibraryVerificationFeature */ = {
+		8B41F6822DEDD23B001A66F9 /* MusicCountFeature */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = MusicLibraryVerificationFeature;
+			productName = MusicCountFeature;
 		};
-		8B41F6842DEDD25C001A66F9 /* MusicLibraryVerificationFeature */ = {
+		8B41F6842DEDD25C001A66F9 /* MusicCountFeature */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = MusicLibraryVerificationFeature;
+			productName = MusicCountFeature;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
