@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents song information extracted from MPMediaLibrary
-struct SongInfo: Identifiable, Sendable {
+struct SongInfo: Identifiable, Sendable, Equatable {
     let id: UInt64
     let title: String
     let artist: String

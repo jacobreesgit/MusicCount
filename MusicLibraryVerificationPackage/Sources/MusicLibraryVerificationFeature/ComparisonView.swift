@@ -4,45 +4,75 @@ struct ComparisonView: View {
     let song1: SongInfo
     let song2: SongInfo
 
+    @State private var playerService = MusicPlayerService()
+    @State private var showingPlayer = false
+    @State private var selectedMatchMode: MatchingSession.Mode?
+
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
                 // Header with comparison summary
                 comparisonSummary
+                    .accessibilityElement(children: .combine)
 
                 Divider()
 
-                // Song 1 Details
-                songCard(song: song1, label: "Song 1", color: .blue)
+                // Side-by-side comparison cards
+                HStack(spacing: 0) {
+                    // Song 1 Card
+                    songCard(song: song1, label: "Song 1", color: .blue)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel("Song 1: \(song1.title) by \(song1.artist), \(song1.playCount) plays")
 
-                // VS Divider
-                HStack {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(.secondary.opacity(0.3))
+                    // VS Divider
+                    VStack(spacing: 4) {
+                        Rectangle()
+                            .frame(width: 1)
+                            .foregroundStyle(.secondary.opacity(0.3))
 
-                    Text("VS")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 8)
+                        Text("VS")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 4)
 
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(.secondary.opacity(0.3))
+                        Rectangle()
+                            .frame(width: 1)
+                            .foregroundStyle(.secondary.opacity(0.3))
+                    }
+                    .frame(width: 40)
+                    .accessibilityHidden(true)
+
+                    // Song 2 Card
+                    songCard(song: song2, label: "Song 2", color: .green)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel("Song 2: \(song2.title) by \(song2.artist), \(song2.playCount) plays")
                 }
-                .padding(.vertical, 8)
-
-                // Song 2 Details
-                songCard(song: song2, label: "Song 2", color: .green)
 
                 // Play Count Comparison
                 playCountComparisonSection
+                    .accessibilityElement(children: .combine)
+
+                // Matching Buttons
+                if difference != 0 {
+                    matchingButtonsSection
+                }
             }
             .padding()
         }
         .navigationTitle("Comparison")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingPlayer) {
+            if selectedMatchMode != nil {
+                NavigationStack {
+                    PlayerView(
+                        playerService: playerService,
+                        song: lowerSong,
+                        currentSystemPlayCount: lowerSong.playCount
+                    )
+                }
+            }
+        }
     }
 
     // MARK: - Comparison Summary
@@ -73,56 +103,48 @@ struct ComparisonView: View {
     // MARK: - Song Card
 
     private func songCard(song: SongInfo, label: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .center, spacing: 12) {
             // Label
-            HStack {
-                Text(label)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(color.gradient, in: Capsule())
-
-                Spacer()
-
-                if song.hasAssetURL {
-                    Label("Local", systemImage: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                }
-            }
+            Text(label)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .background(color.gradient, in: Capsule())
 
             // Song Info
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .center, spacing: 6) {
                 Text(song.title)
-                    .font(.title3)
+                    .font(.subheadline)
                     .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
 
                 Text(song.artist)
-                    .font(.subheadline)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
-
-                if !song.album.isEmpty && song.album != "Unknown Album" {
-                    Label(song.album, systemImage: "opticaldisc")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                    .lineLimit(1)
             }
 
             // Play Count Badge
-            HStack {
+            VStack(spacing: 4) {
                 Image(systemName: "play.circle.fill")
+                    .font(.title2)
                     .foregroundStyle(color)
+
                 Text("\(song.playCount)")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .fontDesign(.rounded)
+
                 Text("plays")
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
             }
         }
         .padding()
+        .frame(maxWidth: .infinity)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
@@ -229,5 +251,101 @@ struct ComparisonView: View {
 
         let percentage = CGFloat(playCount) / CGFloat(maxPlayCount)
         return maxWidth * percentage
+    }
+
+    private var lowerSong: SongInfo {
+        song1.playCount < song2.playCount ? song1 : song2
+    }
+
+    private var higherSong: SongInfo {
+        song1.playCount > song2.playCount ? song1 : song2
+    }
+
+    // MARK: - Matching Buttons Section
+
+    private var matchingButtonsSection: some View {
+        VStack(spacing: 16) {
+            Text("Match Play Counts")
+                .font(.headline)
+
+            VStack(spacing: 12) {
+                // Match Mode Button
+                Button {
+                    selectedMatchMode = .match
+                    let targetPlays = higherSong.playCount
+                    let playsNeeded = targetPlays - lowerSong.playCount
+                    playerService.startMatchingSession(
+                        song: lowerSong,
+                        targetPlays: playsNeeded,
+                        mode: .match
+                    )
+                    showingPlayer = true
+                } label: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "equal.circle.fill")
+                                .font(.title2)
+                            Text("Match Mode")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Text("Play \"\(lowerSong.title)\" \(higherSong.playCount - lowerSong.playCount) times to reach \(higherSong.playCount) plays")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+
+                // Add Mode Button
+                Button {
+                    selectedMatchMode = .add
+                    let difference = abs(song1.playCount - song2.playCount)
+                    playerService.startMatchingSession(
+                        song: lowerSong,
+                        targetPlays: difference,
+                        mode: .add
+                    )
+                    showingPlayer = true
+                } label: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title2)
+                            Text("Add Mode")
+                                .font(.headline)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        let difference = abs(song1.playCount - song2.playCount)
+                        Text("Play \"\(lowerSong.title)\" \(difference) times to reach \(lowerSong.playCount + difference) plays")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+            }
+
+            Text("Note: Play counts update when you fully close and reopen the app")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 }

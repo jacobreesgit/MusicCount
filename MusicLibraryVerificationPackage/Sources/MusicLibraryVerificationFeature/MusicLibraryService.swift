@@ -11,7 +11,7 @@ final class MusicLibraryService {
         case authorized
     }
 
-    enum LoadingState: Sendable {
+    enum LoadingState: Sendable, Equatable {
         case idle
         case loading
         case loaded([SongInfo])

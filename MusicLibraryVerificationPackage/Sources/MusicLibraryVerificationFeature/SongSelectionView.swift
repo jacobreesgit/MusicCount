@@ -18,7 +18,9 @@ struct SongSelectionView: View {
                 SongRowView(song: song)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Select \(song.title) by \(song.artist), \(song.playCount) plays")
         }
+        .listStyle(.insetGrouped)
         .searchable(text: $searchText, prompt: "Search songs")
         .navigationTitle(selectionTitle)
         .navigationBarTitleDisplayMode(.inline)

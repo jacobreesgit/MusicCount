@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct ContentView: View {
     @State private var service = MusicLibraryService()
+    @State private var playerService = MusicPlayerService()
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingSelection1 = false
@@ -28,6 +29,28 @@ public struct ContentView: View {
                 // Automatically request permission on first launch
                 if service.authorizationState == .notDetermined {
                     await service.requestAuthorization()
+                }
+                // Auto-load library if already authorized (returning user)
+                if service.authorizationState == .authorized {
+                    if case .idle = service.loadingState {
+                        await service.loadMusicLibrary()
+                    }
+                }
+            }
+            .onChange(of: service.authorizationState) { _, newState in
+                // Auto-load library when permission is granted
+                if newState == .authorized {
+                    if case .idle = service.loadingState {
+                        Task {
+                            await service.loadMusicLibrary()
+                        }
+                    }
+                }
+            }
+            .onChange(of: service.loadingState) { _, newState in
+                // Reconcile play counts when library loads
+                if case .loaded(let songs) = newState {
+                    playerService.reconcilePlayCounts(currentLibrarySongs: songs)
                 }
             }
             .sheet(isPresented: $showingSelection1) {
@@ -127,9 +150,7 @@ public struct ContentView: View {
     private var authorizedView: some View {
         Group {
             switch service.loadingState {
-            case .idle:
-                idleView
-            case .loading:
+            case .idle, .loading:
                 loadingView
             case .loaded(let songs):
                 libraryView(songs: songs)
@@ -140,27 +161,6 @@ public struct ContentView: View {
     }
 
     // MARK: - Loading States
-
-    private var idleView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "checkmark.circle")
-                .font(.system(size: 80))
-                .foregroundStyle(.green)
-
-            Text("Access Granted")
-                .font(.title2)
-                .fontWeight(.semibold)
-
-            Button("Load Library") {
-                Task {
-                    await service.loadMusicLibrary()
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-        }
-        .padding()
-    }
 
     private var loadingView: some View {
         VStack(spacing: 20) {
@@ -216,6 +216,7 @@ public struct ContentView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(selectedSong1 != nil ? "Song 1: \(selectedSong1!.title) by \(selectedSong1!.artist). Tap to change selection." : "Select Song 1")
 
                 // Song 2 Selection Button
                 Button {
@@ -228,6 +229,7 @@ public struct ContentView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(selectedSong2 != nil ? "Song 2: \(selectedSong2!.title) by \(selectedSong2!.artist). Tap to change selection." : "Select Song 2")
             }
 
             // Show comparison button if both songs selected
@@ -248,18 +250,12 @@ public struct ContentView: View {
             Section("All Songs (\(songs.count))") {
                 ForEach(songs) { song in
                     SongRowView(song: song)
+                        .accessibilityLabel("\(song.title) by \(song.artist), \(song.playCount) plays")
                 }
             }
         }
+        .listStyle(.insetGrouped)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Refresh") {
-                    Task {
-                        await service.loadMusicLibrary()
-                    }
-                }
-            }
-
             if selectedSong1 != nil || selectedSong2 != nil {
                 ToolbarItem(placement: .secondaryAction) {
                     Button("Clear Selection") {
@@ -383,25 +379,9 @@ struct SongRowView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            HStack(spacing: 12) {
-                Label("\(song.playCount)", systemImage: "play.circle")
-                    .font(.caption)
-                    .foregroundStyle(song.playCount > 0 ? .blue : .secondary)
-
-                if song.hasAssetURL {
-                    Label("Local", systemImage: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                } else {
-                    Label("Cloud", systemImage: "icloud")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-
-                Label(song.mediaType, systemImage: "waveform")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Label("\(song.playCount) plays", systemImage: "play.circle.fill")
+                .font(.caption)
+                .foregroundStyle(song.playCount > 0 ? .blue : .secondary)
         }
         .padding(.vertical, 4)
     }
