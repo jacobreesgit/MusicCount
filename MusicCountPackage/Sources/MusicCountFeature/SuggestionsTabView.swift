@@ -80,10 +80,12 @@ struct SuggestionsTabView: View {
                             .buttonStyle(PlainButtonStyle())
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) {
-                                    suggestionsService.dismissSong(
-                                        title: suggestion.sharedTitle,
-                                        songId: song.id
-                                    )
+                                    withAnimation(.easeOut) {
+                                        suggestionsService.dismissSong(
+                                            title: suggestion.sharedTitle,
+                                            songId: song.id
+                                        )
+                                    }
                                 } label: {
                                     Label("Dismiss", systemImage: "xmark.circle")
                                 }
@@ -100,9 +102,11 @@ struct SuggestionsTabView: View {
                         )
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                suggestionsService.dismissEntireGroup(
-                                    title: suggestion.sharedTitle
-                                )
+                                withAnimation(.easeOut) {
+                                    suggestionsService.dismissEntireGroup(
+                                        title: suggestion.sharedTitle
+                                    )
+                                }
                             } label: {
                                 Label("Dismiss All", systemImage: "xmark.circle.fill")
                             }

@@ -74,6 +74,12 @@ final class SuggestionsService: Sendable {
         saveDismissedKeys()
     }
 
+    /// Reset all dismissed suggestions (both individual songs and entire groups)
+    func resetDismissals() {
+        dismissedKeys.removeAll()
+        UserDefaults.standard.removeObject(forKey: dismissedKeysKey)
+    }
+
     private func normalizeTitle(_ title: String) -> String {
         title.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
     }

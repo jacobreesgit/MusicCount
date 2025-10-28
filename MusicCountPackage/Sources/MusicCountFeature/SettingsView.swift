@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(SuggestionsService.self) private var suggestionsService
+    @State private var showingResetAlert = false
+
     var body: some View {
         Form {
             // About Section
@@ -40,6 +43,18 @@ struct SettingsView: View {
             }
 
             Section {
+                Button(role: .destructive) {
+                    showingResetAlert = true
+                } label: {
+                    Label("Reset Dismissed Suggestions", systemImage: "arrow.counterclockwise.circle")
+                }
+            } header: {
+                Text("Suggestions")
+            } footer: {
+                Text("All previously dismissed songs and suggestion groups will appear again in the Suggestions tab.")
+            }
+
+            Section {
                 Link(destination: URL(string: "mailto:jacobrees@me.com")!) {
                     HStack {
                         Label("Send Feedback", systemImage: "envelope")
@@ -67,6 +82,14 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }
+        }
+        .alert("Reset Dismissed Suggestions?", isPresented: $showingResetAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                suggestionsService.resetDismissals()
+            }
+        } message: {
+            Text("All previously dismissed songs and suggestion groups will appear again in the Suggestions tab.")
         }
     }
 
