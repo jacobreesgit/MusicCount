@@ -47,12 +47,6 @@ public struct ContentView: View {
                     }
                 }
             }
-            .onChange(of: service.loadingState) { _, newState in
-                // Reconcile play counts when library loads
-                if case .loaded(let songs) = newState {
-                    playerService.reconcilePlayCounts(currentLibrarySongs: songs)
-                }
-            }
             .sheet(isPresented: $showingComparison) {
                 if let song1 = selectedSong1, let song2 = selectedSong2 {
                     NavigationStack {

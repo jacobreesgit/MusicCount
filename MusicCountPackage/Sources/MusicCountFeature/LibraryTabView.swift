@@ -48,9 +48,8 @@ struct LibraryTabView: View {
                 }
             }
             .onChange(of: service.loadingState) { _, newState in
-                // Reconcile play counts when library loads
+                // Analyze songs when library loads
                 if case .loaded(let songs) = newState {
-                    playerService.reconcilePlayCounts(currentLibrarySongs: songs)
                     suggestionsService.analyzeSongs(songs)
                 }
             }

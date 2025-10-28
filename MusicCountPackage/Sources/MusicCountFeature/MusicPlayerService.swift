@@ -238,42 +238,6 @@ final class MusicPlayerService {
         UserDefaults.standard.removeObject(forKey: sessionKey)
     }
 
-    // MARK: - Play Count Reconciliation
-
-    func reconcilePlayCounts(currentLibrarySongs: [SongInfo]) {
-        guard var session = currentSession else { return }
-
-        // Find the song in the current library
-        guard let updatedSong = currentLibrarySongs.first(where: { $0.id == session.songId }) else {
-            return
-        }
-
-        // Check if system play count increased
-        let systemPlayCountIncrease = updatedSong.playCount - session.startingSystemPlayCount
-
-        if systemPlayCountIncrease > 0 {
-            // System play count updated! This means app was restarted
-            // The system count might have increased by our in-app plays
-            print("📊 System play count increased by \(systemPlayCountIncrease)")
-            print("📊 In-app plays completed: \(session.completedPlays)")
-
-            // Calculate the expected final count
-            let expectedFinalCount = session.startingSystemPlayCount + session.targetPlays
-
-            // Verify if we've reached the goal
-            if updatedSong.playCount >= expectedFinalCount {
-                // Goal reached!
-                print("✅ Goal reached! Clearing session.")
-                completeSession()
-            } else {
-                // Update session with new starting count
-                session.startingSystemPlayCount = updatedSong.playCount
-                currentSession = session
-                saveSession()
-            }
-        }
-    }
-
     // Cleanup happens automatically:
     // - AnyCancellable.cancel() is called when timeObserver is deallocated
     // - player.endGeneratingPlaybackNotifications() is called in stopPlaying()

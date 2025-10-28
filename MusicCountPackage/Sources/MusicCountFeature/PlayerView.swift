@@ -142,7 +142,7 @@ struct PlayerView: View {
 
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("System Plays")
+                        Text("Plays")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Text("\(session.startingSystemPlayCount)")
