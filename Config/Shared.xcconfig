@@ -26,13 +26,13 @@ TARGETED_DEVICE_FAMILY = 1,2
 GENERATE_INFOPLIST_FILE = YES
 INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeRight UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationPortrait
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationLandscapeRight UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown
-INFOPLIST_KEY_NSAppleMusicUsageDescription = This app needs access to your music library to verify what songs and play count data are accessible via MPMediaLibrary for Phase 1 technical verification.
+INFOPLIST_KEY_NSAppleMusicUsageDescription = MusicCount needs access to your Apple Music library to track and compare play counts across your songs.
 
 // ==========================================
 // Code Signing
 // ==========================================
 CODE_SIGN_STYLE = Automatic
-DEVELOPMENT_TEAM =
+DEVELOPMENT_TEAM = 5RP4WRQ9V2
 
 // ==========================================
 // Entitlements
