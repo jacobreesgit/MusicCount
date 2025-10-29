@@ -8,6 +8,8 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
     case titleDescending = "titleDescending"
     case artistAscending = "artistAscending"
     case artistDescending = "artistDescending"
+    case albumAscending = "albumAscending"
+    case albumDescending = "albumDescending"
 
     var id: String { rawValue }
 
@@ -20,6 +22,8 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
             return "Title"
         case .artistAscending, .artistDescending:
             return "Artist"
+        case .albumAscending, .albumDescending:
+            return "Album"
         }
     }
 
@@ -38,6 +42,10 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
             return songs.sorted { $0.artist.localizedStandardCompare($1.artist) == .orderedAscending }
         case .artistDescending:
             return songs.sorted { $0.artist.localizedStandardCompare($1.artist) == .orderedDescending }
+        case .albumAscending:
+            return songs.sorted { $0.album.localizedStandardCompare($1.album) == .orderedAscending }
+        case .albumDescending:
+            return songs.sorted { $0.album.localizedStandardCompare($1.album) == .orderedDescending }
         }
     }
 
@@ -50,6 +58,8 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
         case .titleDescending: return "Title"
         case .artistAscending: return "Artist"
         case .artistDescending: return "Artist"
+        case .albumAscending: return "Album"
+        case .albumDescending: return "Album"
         }
     }
 
@@ -59,9 +69,9 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
     func icon(isSelected: Bool) -> String {
         let suffix = isSelected ? ".fill" : ""
         switch self {
-        case .playCountDescending, .titleDescending, .artistDescending:
+        case .playCountDescending, .titleDescending, .artistDescending, .albumDescending:
             return "arrow.down.circle\(suffix)"
-        case .playCountAscending, .titleAscending, .artistAscending:
+        case .playCountAscending, .titleAscending, .artistAscending, .albumAscending:
             return "arrow.up.circle\(suffix)"
         }
     }

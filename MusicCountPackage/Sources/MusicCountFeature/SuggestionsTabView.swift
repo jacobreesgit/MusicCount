@@ -176,6 +176,8 @@ enum SuggestionSortOption: String, CaseIterable, Identifiable, Sendable {
     case playCountDifference = "playCountDifference"
     case titleAscending = "titleAscending"
     case titleDescending = "titleDescending"
+    case artistAscending = "artistAscending"
+    case artistDescending = "artistDescending"
     case versionCountDescending = "versionCountDescending"
     case versionCountAscending = "versionCountAscending"
 
@@ -187,6 +189,8 @@ enum SuggestionSortOption: String, CaseIterable, Identifiable, Sendable {
             return "Play Count Difference"
         case .titleAscending, .titleDescending:
             return "Title"
+        case .artistAscending, .artistDescending:
+            return "Artist"
         case .versionCountDescending, .versionCountAscending:
             return "Version Count"
         }
@@ -200,6 +204,10 @@ enum SuggestionSortOption: String, CaseIterable, Identifiable, Sendable {
             return suggestions.sorted { $0.sharedTitle.localizedStandardCompare($1.sharedTitle) == .orderedAscending }
         case .titleDescending:
             return suggestions.sorted { $0.sharedTitle.localizedStandardCompare($1.sharedTitle) == .orderedDescending }
+        case .artistAscending:
+            return suggestions.sorted { $0.sharedArtist.localizedStandardCompare($1.sharedArtist) == .orderedAscending }
+        case .artistDescending:
+            return suggestions.sorted { $0.sharedArtist.localizedStandardCompare($1.sharedArtist) == .orderedDescending }
         case .versionCountDescending:
             return suggestions.sorted { $0.songs.count > $1.songs.count }
         case .versionCountAscending:
@@ -210,9 +218,9 @@ enum SuggestionSortOption: String, CaseIterable, Identifiable, Sendable {
     func icon(isSelected: Bool) -> String {
         let suffix = isSelected ? ".fill" : ""
         switch self {
-        case .playCountDifference, .versionCountDescending, .titleDescending:
+        case .playCountDifference, .versionCountDescending, .titleDescending, .artistDescending:
             return "arrow.down.circle\(suffix)"
-        case .titleAscending, .versionCountAscending:
+        case .titleAscending, .artistAscending, .versionCountAscending:
             return "arrow.up.circle\(suffix)"
         }
     }

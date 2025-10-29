@@ -68,35 +68,6 @@ struct SettingsView: View {
             } footer: {
                 Text("All previously dismissed songs and suggestion groups will appear again in the Suggestions tab.")
             }
-
-            Section {
-                Link(destination: URL(string: "mailto:jacobrees@me.com")!) {
-                    HStack {
-                        Label("Send Feedback", systemImage: "envelope")
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } header: {
-                Text("Support")
-            }
-
-            Section {
-                VStack(spacing: 8) {
-                    Text("Made with ♥︎ for music lovers")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-
-                    Text("© 2025 MusicCount")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
-            }
         }
         .alert("Reset Dismissed Suggestions?", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }

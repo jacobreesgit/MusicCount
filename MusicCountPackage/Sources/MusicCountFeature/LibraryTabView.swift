@@ -310,10 +310,7 @@ struct LibraryTabView: View {
             selectedSong2 = nil
         } label: {
             Label("Clear Selection", systemImage: "xmark.circle")
-                .font(.headline)
         }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
         .disabled(selectedSong1 == nil && selectedSong2 == nil)
     }
 
