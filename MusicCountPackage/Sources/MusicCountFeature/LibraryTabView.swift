@@ -6,6 +6,7 @@ struct LibraryTabView: View {
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
+    @State private var showingManualQueue = false
     @State private var sortOption: SortOption = .playCountDescending
     @State private var searchText = ""
     @Binding var selectedTab: Int
@@ -71,6 +72,13 @@ struct LibraryTabView: View {
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+                }
+            }
+            .sheet(isPresented: $showingManualQueue) {
+                if let song = selectedSong1 ?? selectedSong2 {
+                    ManualQueueView(song: song, showingManualQueue: $showingManualQueue)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
                 }
             }
         }
@@ -260,13 +268,20 @@ struct LibraryTabView: View {
         .overlay(alignment: .bottom) {
             FloatingActionButton(
                 selectedCount: selectionCount,
-                isEnabled: selectedSong1 != nil && selectedSong2 != nil,
+                isEnabled: selectedSong1 != nil || selectedSong2 != nil,
                 action: {
-                    showingComparison = true
+                    if selectionCount == 1 {
+                        // Single song selected - show manual queue
+                        showingManualQueue = true
+                    } else if selectionCount == 2 {
+                        // Both songs selected - show comparison
+                        showingComparison = true
+                    }
                 }
             )
-            .opacity(showingComparison ? 0 : 1)
+            .opacity(showingComparison || showingManualQueue ? 0 : 1)
             .animation(.easeInOut(duration: 0.3), value: showingComparison)
+            .animation(.easeInOut(duration: 0.3), value: showingManualQueue)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

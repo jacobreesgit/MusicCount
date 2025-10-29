@@ -6,6 +6,7 @@ public struct ContentView: View {
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
     @State private var showingComparison = false
+    @State private var showingManualQueue = false
     @State private var sortOption: SortOption = .playCountDescending
     @State private var selectedTab = 0
 
@@ -66,6 +67,13 @@ public struct ContentView: View {
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+                }
+            }
+            .sheet(isPresented: $showingManualQueue) {
+                if let song = selectedSong1 ?? selectedSong2 {
+                    ManualQueueView(song: song, showingManualQueue: $showingManualQueue)
+                        .presentationDetents([.medium, .large])
+                        .presentationDragIndicator(.visible)
                 }
             }
             .environment(queueService)
@@ -249,8 +257,23 @@ public struct ContentView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .safeAreaInset(edge: .bottom) {
-            compareButton
+        .overlay(alignment: .bottom) {
+            FloatingActionButton(
+                selectedCount: selectionCount,
+                isEnabled: selectedSong1 != nil || selectedSong2 != nil,
+                action: {
+                    if selectionCount == 1 {
+                        // Single song selected - show manual queue
+                        showingManualQueue = true
+                    } else if selectionCount == 2 {
+                        // Both songs selected - show comparison
+                        showingComparison = true
+                    }
+                }
+            )
+            .opacity(showingComparison || showingManualQueue ? 0 : 1)
+            .animation(.easeInOut(duration: 0.3), value: showingComparison)
+            .animation(.easeInOut(duration: 0.3), value: showingManualQueue)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -286,21 +309,6 @@ public struct ContentView: View {
         .disabled(selectedSong1 == nil && selectedSong2 == nil)
     }
 
-    private var compareButton: some View {
-        Button {
-            showingComparison = true
-        } label: {
-            Label("Compare Songs", systemImage: "chart.bar.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(selectedSong1 == nil || selectedSong2 == nil)
-        .padding()
-        .background(.ultraThinMaterial)
-    }
-
     // MARK: - Helper Methods
 
     private func selectionSlot(for song: SongInfo) -> Int? {
@@ -310,6 +318,13 @@ public struct ContentView: View {
             return 2
         }
         return nil
+    }
+
+    private var selectionCount: Int {
+        var count = 0
+        if selectedSong1 != nil { count += 1 }
+        if selectedSong2 != nil { count += 1 }
+        return count
     }
 
     public init() {}

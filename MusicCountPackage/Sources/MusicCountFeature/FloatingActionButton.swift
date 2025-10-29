@@ -10,14 +10,17 @@ struct FloatingActionButton: View {
             ZStack(alignment: .topTrailing) {
                 // Main button capsule with icon and text
                 HStack(spacing: 8) {
-                    Image(systemName: "chart.bar.fill")
+                    Image(systemName: buttonIcon)
                         .font(.headline)
 
-                    Text("Compare Songs")
+                    Text(buttonText)
                         .font(.headline)
                         .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 .foregroundStyle(.white)
+                .frame(width: 220, height: 24) // Fixed dimensions for consistency
                 .padding(.horizontal, 24)
                 .padding(.vertical, 16)
                 .background(
@@ -51,6 +54,28 @@ struct FloatingActionButton: View {
         .accessibilityAddTraits(isEnabled ? [] : .isButton)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedCount)
         .animation(.easeInOut(duration: 0.2), value: isEnabled)
+    }
+
+    private var buttonText: String {
+        switch selectedCount {
+        case 0:
+            return "Make Selection"
+        case 1:
+            return "Queue Multiple Plays"
+        default:
+            return "Compare Songs"
+        }
+    }
+
+    private var buttonIcon: String {
+        switch selectedCount {
+        case 0:
+            return "hand.tap.fill"
+        case 1:
+            return "plus.circle.fill"
+        default:
+            return "chart.bar.fill"
+        }
     }
 }
 

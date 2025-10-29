@@ -49,11 +49,6 @@ final class AppleMusicQueueService {
                 }
             }
 
-        case .appendToEnd:
-            // Add to end of existing queue
-            systemPlayer.append(descriptor)
-            systemPlayer.play()
-
         case .insertNext:
             // Insert after current song (plays next)
             systemPlayer.prepend(descriptor)
