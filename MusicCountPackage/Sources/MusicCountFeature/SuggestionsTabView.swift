@@ -26,27 +26,8 @@ struct SuggestionsTabView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if suggestionsService.activeSuggestions.isEmpty {
-                    emptyStateView
-                } else {
-                    suggestionsList
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Picker("Sort", selection: $sortOption) {
-                            ForEach(SuggestionSortOption.allCases) { option in
-                                Label(option.displayName, systemImage: option.icon(isSelected: option == sortOption)).tag(option)
-                            }
-                        }
-                    } label: {
-                        Label("Sort", systemImage: "arrow.up.arrow.down")
-                    }
-                }
-            }
+            contentView
+                .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(item: $selectedSuggestion) { suggestion in
             NavigationStack {
@@ -61,6 +42,30 @@ struct SuggestionsTabView: View {
                 )
             }
             .presentationDetents([.medium, .large])
+        }
+    }
+
+    private var contentView: some View {
+        Group {
+            if filteredAndSortedSuggestions.isEmpty {
+                emptyStateView
+                    .toolbar(.hidden, for: .navigationBar)
+            } else {
+                suggestionsList
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Menu {
+                                Picker("Sort", selection: $sortOption) {
+                                    ForEach(SuggestionSortOption.allCases) { option in
+                                        Label(option.displayName, systemImage: option.icon(isSelected: option == sortOption)).tag(option)
+                                    }
+                                }
+                            } label: {
+                                Label("Sort", systemImage: "arrow.up.arrow.down")
+                            }
+                        }
+                    }
+            }
         }
     }
 
@@ -133,13 +138,15 @@ struct SuggestionsTabView: View {
     }
 
     private var emptyStateView: some View {
-        ContentUnavailableView(
-            "No Suggestions",
-            systemImage: "lightbulb.slash",
-            description: Text(suggestionsService.allSuggestions.isEmpty
+        ContentUnavailableView {
+            Text("No Suggestions")
+                .font(.title2.weight(.semibold))
+        } description: {
+            Text(suggestionsService.allSuggestions.isEmpty
                 ? "No duplicate songs found"
                 : "All suggestions reviewed")
-        )
+        }
+        .background(Color(.systemGroupedBackground))
     }
 }
 

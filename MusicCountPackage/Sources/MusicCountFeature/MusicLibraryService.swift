@@ -3,7 +3,7 @@ import Observation
 
 @MainActor
 @Observable
-final class MusicLibraryService {
+class MusicLibraryService {
     enum AuthorizationState: Sendable {
         case notDetermined
         case denied
@@ -18,8 +18,8 @@ final class MusicLibraryService {
         case error(String)
     }
 
-    private(set) var authorizationState: AuthorizationState = .notDetermined
-    private(set) var loadingState: LoadingState = .idle
+    var authorizationState: AuthorizationState = .notDetermined
+    var loadingState: LoadingState = .idle
 
     init() {
         checkAuthorizationStatus()

@@ -28,6 +28,12 @@ public struct MainTabView: View {
         }
         .environment(queueService)
         .environment(suggestionsService)
+        .onAppear {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithDefaultBackground()
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
     }
 
     public init() {}

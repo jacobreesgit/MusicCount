@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LibraryTabView: View {
-    @State private var service = MusicLibraryService()
+    @State private var service = MusicLibraryServiceFactory.create()
     @Environment(SuggestionsService.self) private var suggestionsService
     @State private var selectedSong1: SongInfo?
     @State private var selectedSong2: SongInfo?
@@ -25,6 +25,7 @@ struct LibraryTabView: View {
                     authorizedView
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 // Automatically request permission on first launch
                 if service.authorizationState == .notDetermined {
@@ -191,8 +192,18 @@ struct LibraryTabView: View {
     }
 
     private func libraryView(songs: [SongInfo]) -> some View {
-        List {
-            ForEach(filteredSongs(from: songs)) { song in
+        let filtered = filteredSongs(from: songs)
+
+        if filtered.isEmpty {
+            return AnyView(
+                emptyLibraryState
+                    .toolbar(.hidden, for: .navigationBar)
+            )
+        }
+
+        return AnyView(
+            List {
+                ForEach(filtered) { song in
                 SongRowView(
                     song: song,
                     selectionSlot: selectionSlot(for: song)
@@ -300,6 +311,19 @@ struct LibraryTabView: View {
                 clearButton
             }
         }
+        )
+    }
+
+    private var emptyLibraryState: some View {
+        ContentUnavailableView {
+            Text("No Songs Found")
+                .font(.title2.weight(.semibold))
+        } description: {
+            Text(searchText.isEmpty
+                ? "Your music library is empty"
+                : "No songs match '\(searchText)'")
+        }
+        .background(Color(.systemGroupedBackground))
     }
 
     // MARK: - Action Buttons

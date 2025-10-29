@@ -24,7 +24,7 @@ struct ManualQueueView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
 
-                        Text("Queue this song multiple times to increase play count")
+                        Text("Queue this song multiple times to match play counts")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -156,7 +156,7 @@ struct ManualQueueView: View {
                         }
                     }
 
-                // Increase button
+                // Increment button
                 Button {
                     if numberOfPlays < 1000 {
                         numberOfPlays += 1

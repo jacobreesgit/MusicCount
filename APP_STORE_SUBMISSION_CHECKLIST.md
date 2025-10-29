@@ -7,43 +7,13 @@
 - ✅ App display name: "MusicCount"
 - ✅ Version numbers: 1.0 (marketing), 1 (build)
 - ✅ Deployment target: iOS 17.0+ (good for compatibility)
-- ✅ Universal app (iPhone + iPad support)
+- ✅ iPhone-only app (iPad support removed)
 - ✅ NSAppleMusicUsageDescription defined (but needs improvement)
 - ✅ Background audio mode configured
 - ✅ SwiftUI-based, modern Swift 6 code
 - ✅ No in-app purchases/subscriptions (simpler review)
 - ✅ No external network calls (privacy-friendly)
 
----
-
-## 🚨 CRITICAL - Must Fix Before Submission
-
-### 1. **App Icon Images**
-**Status:** Icon infrastructure configured for iOS 26, but NO actual image files
-**What's needed:**
-- 1024x1024px PNG file (standard icon)
-- 1024x1024px PNG file (dark mode variant - optional but recommended)
-- 1024x1024px PNG file (tinted variant - optional)
-
-**Action:** Add icon image files to `MusicCount/Assets.xcassets/AppIcon.appiconset/`
-
-### 2. **Development Team**
-**Status:** `DEVELOPMENT_TEAM` is empty in `Config/Shared.xcconfig`
-**What's needed:**
-- Your Apple Developer Team ID (10-character string)
-- Must be set for App Store distribution signing
-
-**Action:** Set `DEVELOPMENT_TEAM = YOUR_TEAM_ID` in Shared.xcconfig
-
-### 3. **Privacy Description Text**
-**Status:** Too technical - says "Phase 1 technical verification"
-**Current:** `This app needs access to your music library to verify what songs and play count data are accessible via MPMediaLibrary for Phase 1 technical verification.`
-
-**Recommended:** `MusicCount needs access to your Apple Music library to track and compare play counts across your songs.`
-
-**Action:** Update line 29 in `Config/Shared.xcconfig`
-
----
 
 ## 📱 REQUIRED - App Store Connect Assets
 
@@ -51,8 +21,6 @@
 **What's needed:**
 - **6.7" display** (iPhone 15 Pro Max): 1290 x 2796 pixels (3-10 screenshots)
 - **6.5" display** (iPhone 14 Plus): 1284 x 2778 pixels (3-10 screenshots)
-- **5.5" display** (iPhone 8 Plus): 1242 x 2208 pixels (optional but recommended)
-- **iPad Pro 12.9"**: 2048 x 2732 pixels (if emphasizing iPad support)
 
 **Best practices:**
 - Show main features: Library view, Suggestions, Comparison view, Manual queue
@@ -67,7 +35,7 @@
 **App Name:** MusicCount (already set ✅)
 
 **Subtitle** (30 chars max):
-- Example: "Track Your Music Plays"
+- Example: "Match Your Music Plays"
 
 **Description** (4000 chars max):
 - Feature list and benefits
@@ -79,7 +47,7 @@
   • View your entire music library sorted by play count, title, artist, or album
   • Discover duplicate songs with mismatched play counts
   • Compare songs side-by-side to see which has more plays
-  • Queue songs multiple times to increase play counts
+  • Queue songs multiple times to match play counts
   • Customizable queue behavior (Insert Next or Replace Queue)
 
   PERFECT FOR:
@@ -157,32 +125,6 @@ No login required. Uses only local device data.
 
 ---
 
-## 🎯 RECOMMENDED - Quality & Marketing
-
-### 11. **App Preview Video** (Optional but highly recommended)
-- 15-30 seconds showing key features
-- Format: 1920x1080 or device resolution
-- Significantly increases conversion rates
-
-### 12. **TestFlight Beta Testing**
-**Why:** Catch bugs before public release
-**How:**
-- Upload build to App Store Connect
-- Add internal testers (up to 100)
-- Get feedback on real devices
-- Recommended: 1-2 weeks of testing
-
-### 13. **Localization** (If targeting multiple countries)
-- Currently English only
-- Consider: Spanish, French, German, Japanese for broader reach
-- Need translations for: App name, description, keywords, screenshots
-
-### 14. **App Store Optimization (ASO)**
-- Research competing apps
-- Analyze successful keywords
-- A/B test screenshots and descriptions
-- Monitor conversion rate
-
 ---
 
 ## 🔧 TECHNICAL - Pre-Submission Checklist
@@ -193,16 +135,6 @@ No login required. Uses only local device data.
 - [ ] Validate archive before uploading
 - [ ] Upload to App Store Connect
 
-### 16. **Testing Requirements**
-- [ ] Test on physical devices (not just simulator)
-- [ ] Test on multiple iOS versions (17.0+)
-- [ ] Test on different screen sizes (iPhone SE, Pro Max, iPad)
-- [ ] Test low memory scenarios
-- [ ] Test with empty music library
-- [ ] Test with large music library (1000+ songs)
-- [ ] Test all queue behaviors
-- [ ] Verify dark mode appearance
-- [ ] Test VoiceOver accessibility
 
 ### 17. **App Thinning**
 - ✅ Already optimized (SwiftUI, no heavy assets)

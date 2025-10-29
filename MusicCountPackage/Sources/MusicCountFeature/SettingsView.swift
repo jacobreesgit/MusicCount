@@ -69,6 +69,9 @@ struct SettingsView: View {
                 Text("All previously dismissed songs and suggestion groups will appear again in the Suggestions tab.")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .frame(maxHeight: .infinity)
         .alert("Reset Dismissed Suggestions?", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {

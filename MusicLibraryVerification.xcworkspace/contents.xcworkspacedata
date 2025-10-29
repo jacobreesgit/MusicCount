@@ -5,6 +5,6 @@
       location = "group:MusicCountPackage">
    </FileRef>
    <FileRef
-      location = "container:MusicLibraryVerification.xcodeproj">
+      location = "container:MusicCount.xcodeproj">
    </FileRef>
 </Workspace>
