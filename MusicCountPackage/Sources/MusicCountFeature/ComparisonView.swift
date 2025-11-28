@@ -9,6 +9,9 @@ struct ComparisonView: View {
     @Environment(AppleMusicQueueService.self) private var queueService
     @State private var showingSuccessAlert = false
     @State private var queuedCount = 0
+    @State private var selectedSongForQueue: SongInfo?
+    @AppStorage("hasSeenSongSelectionTooltip") private var hasSeenTooltip = false
+    @State private var showTooltip = false
 
     var body: some View {
         ScrollView {
@@ -22,9 +25,10 @@ struct ComparisonView: View {
                 // Side-by-side comparison cards
                 HStack(spacing: 0) {
                     // Song 1 Card
-                    songCard(song: song1, label: "Song 1", color: .blue)
+                    songCard(song: song1, label: "Song 1", color: .blue, isSelected: isSong1Selected)
                         .frame(maxWidth: .infinity)
-                        .accessibilityLabel("Song 1: \(song1.title) by \(song1.artist), \(song1.playCount) plays")
+                        .accessibilityLabel("Song 1: \(song1.title) by \(song1.artist), \(song1.playCount) plays\(isSong1Selected ? ", selected for queuing" : "")")
+                        .accessibilityHint("Tap to select this song for queuing")
 
                     // VS Divider
                     VStack(spacing: 4) {
@@ -46,10 +50,18 @@ struct ComparisonView: View {
                     .accessibilityHidden(true)
 
                     // Song 2 Card
-                    songCard(song: song2, label: "Song 2", color: .green)
+                    songCard(song: song2, label: "Song 2", color: .green, isSelected: isSong2Selected)
                         .frame(maxWidth: .infinity)
-                        .accessibilityLabel("Song 2: \(song2.title) by \(song2.artist), \(song2.playCount) plays")
+                        .accessibilityLabel("Song 2: \(song2.title) by \(song2.artist), \(song2.playCount) plays\(isSong2Selected ? ", selected for queuing" : "")")
+                        .accessibilityHint("Tap to select this song for queuing")
                 }
+                .overlay(alignment: .bottom) {
+                    if showTooltip {
+                        tooltipView
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+                .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.5), trigger: selectedSongForQueue?.id)
 
                 // Matching Buttons
                 matchingButtonsSection
@@ -63,7 +75,24 @@ struct ComparisonView: View {
                 showingComparison = false
             }
         } message: {
-            Text("\(queuedCount) copies of \(lowerSong.title) have been added to your Apple Music queue. Open the Music app to start playback.")
+            Text("\(queuedCount) copies of \(selectedSong.title) have been added to your Apple Music queue. Open the Music app to start playback.")
+        }
+        .task {
+            // Default to lower play count song
+            if song1.playCount == song2.playCount {
+                // Equal plays - no default selection, user must choose
+                selectedSongForQueue = nil
+            } else {
+                selectedSongForQueue = song1.playCount <= song2.playCount ? song1 : song2
+            }
+
+            // Show tooltip on first use
+            if !hasSeenTooltip {
+                try? await Task.sleep(for: .milliseconds(500))
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showTooltip = true
+                }
+            }
         }
     }
 
@@ -94,16 +123,25 @@ struct ComparisonView: View {
 
     // MARK: - Song Card
 
-    private func songCard(song: SongInfo, label: String, color: Color) -> some View {
+    private func songCard(song: SongInfo, label: String, color: Color, isSelected: Bool) -> some View {
         VStack(alignment: .center, spacing: 12) {
-            // Label
-            Text(label)
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
-                .background(color.gradient, in: Capsule())
+            // Label with selection badge
+            HStack(spacing: 6) {
+                Text(label)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(selectionRingColor)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(color.gradient, in: Capsule())
 
             // Song Info
             VStack(alignment: .center, spacing: 6) {
@@ -136,6 +174,7 @@ struct ComparisonView: View {
                     .font(.caption2)
                     .foregroundStyle(.white)
             }
+
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -153,6 +192,33 @@ struct ComparisonView: View {
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .opacity(isSelected || selectedSongForQueue == nil ? 1.0 : 0.85)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectSong(song)
+        }
+    }
+
+    // MARK: - Tooltip
+
+    private var tooltipView: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "hand.tap.fill")
+                .font(.subheadline)
+            Text("Tap either song to change which one gets queued")
+                .font(.subheadline)
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.black.opacity(0.8), in: Capsule())
+        .padding(.bottom, 8)
+        .onTapGesture {
+            withAnimation(.easeOut(duration: 0.2)) {
+                showTooltip = false
+            }
+            hasSeenTooltip = true
+        }
     }
 
     // MARK: - Play Count Comparison
@@ -260,25 +326,52 @@ struct ComparisonView: View {
         return maxWidth * percentage
     }
 
-    private var lowerSong: SongInfo {
-        song1.playCount < song2.playCount ? song1 : song2
+    // MARK: - Selection State
+
+    private var isSong1Selected: Bool {
+        selectedSongForQueue?.id == song1.id
     }
 
-    private var higherSong: SongInfo {
-        song1.playCount > song2.playCount ? song1 : song2
+    private var isSong2Selected: Bool {
+        selectedSongForQueue?.id == song2.id
     }
 
-    private var lowerSongLabel: String {
+    private var selectedSong: SongInfo {
+        selectedSongForQueue ?? (song1.playCount <= song2.playCount ? song1 : song2)
+    }
+
+    private var otherSong: SongInfo {
+        selectedSong.id == song1.id ? song2 : song1
+    }
+
+    private var selectedSongLabel: String {
         if song1.title.lowercased() == song2.title.lowercased() &&
            song1.artist.lowercased() == song2.artist.lowercased() {
             // Same title and artist, need to distinguish by number
-            let songNumber = lowerSong.id == song1.id ? "Song 1" : "Song 2"
-            return "\(lowerSong.title) (\(songNumber))"
+            let songNumber = selectedSong.id == song1.id ? "Song 1" : "Song 2"
+            return "\(selectedSong.title) (\(songNumber))"
         } else {
             // Different songs, just show the title
-            return lowerSong.title
+            return selectedSong.title
         }
     }
+
+    private func selectSong(_ song: SongInfo) {
+        withAnimation(.easeOut(duration: 0.3)) {
+            selectedSongForQueue = song
+        }
+
+        // Dismiss tooltip on first selection
+        if showTooltip {
+            withAnimation(.easeOut(duration: 0.2)) {
+                showTooltip = false
+            }
+            hasSeenTooltip = true
+        }
+    }
+
+    // Selection ring color
+    private let selectionRingColor = Color.white
 
     // MARK: - Matching Buttons Section
 
@@ -287,14 +380,26 @@ struct ComparisonView: View {
             Text("Add to Apple Music Queue")
                 .font(.headline)
 
+            // Show prompt if no song selected (equal play counts)
+            if selectedSongForQueue == nil {
+                Text("Tap a song above to select which one to queue")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+            }
+
             VStack(spacing: 12) {
                 // Match Mode Button
-                let isMatchModeDisabled = difference == 0
+                // Disabled if: no selection, or selected song already has more/equal plays
+                let matchPlaysNeeded = otherSong.playCount - selectedSong.playCount
+                let isMatchModeDisabled = selectedSongForQueue == nil || matchPlaysNeeded <= 0
                 Button {
-                    let playsNeeded = higherSong.playCount - lowerSong.playCount
                     do {
-                        try queueService.addToQueue(song: lowerSong, count: playsNeeded)
-                        queuedCount = playsNeeded
+                        try queueService.addToQueue(song: selectedSong, count: matchPlaysNeeded)
+                        queuedCount = matchPlaysNeeded
                         showingSuccessAlert = true
                     } catch {
                         // Handle error silently for now
@@ -312,13 +417,18 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        if isMatchModeDisabled {
-                            Text("Songs already have matching play counts")
+                        if selectedSongForQueue == nil {
+                            Text("Select a song to enable")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        } else if matchPlaysNeeded <= 0 {
+                            Text("Selected song already has more plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Add \(lowerSongLabel) \(higherSong.playCount - lowerSong.playCount) times to Apple Music queue to reach \(higherSong.playCount) plays")
+                            Text("Add \(selectedSongLabel) \(matchPlaysNeeded) times to reach \(otherSong.playCount) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
@@ -333,11 +443,12 @@ struct ComparisonView: View {
                 .opacity(isMatchModeDisabled ? 0.6 : 1.0)
 
                 // Add Mode Button
-                let isAddModeDisabled = higherSong.playCount == 0
-                let addModeTargetPlays = higherSong.playCount
+                // Adds the selected song as many times as the other song has plays
+                let addModeTargetPlays = otherSong.playCount
+                let isAddModeDisabled = selectedSongForQueue == nil || addModeTargetPlays == 0
                 Button {
                     do {
-                        try queueService.addToQueue(song: lowerSong, count: addModeTargetPlays)
+                        try queueService.addToQueue(song: selectedSong, count: addModeTargetPlays)
                         queuedCount = addModeTargetPlays
                         showingSuccessAlert = true
                     } catch {
@@ -356,13 +467,18 @@ struct ComparisonView: View {
                                 .foregroundStyle(.secondary)
                         }
 
-                        if isAddModeDisabled {
-                            Text("No plays to add")
+                        if selectedSongForQueue == nil {
+                            Text("Select a song to enable")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        } else if isAddModeDisabled {
+                            Text("Other song has no plays to add")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         } else {
-                            Text("Add \(lowerSongLabel) \(addModeTargetPlays) times to Apple Music queue to reach \(lowerSong.playCount + addModeTargetPlays) plays")
+                            Text("Add \(selectedSongLabel) \(addModeTargetPlays) times to reach \(selectedSong.playCount + addModeTargetPlays) plays")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
