@@ -17,8 +17,14 @@ struct ComparisonView: View {
         ScrollView {
             VStack(spacing: 32) {
                 // Header with comparison summary
-                comparisonSummary
-                    .accessibilityElement(children: .combine)
+                VStack(spacing: 12) {
+                    comparisonSummary
+                        .accessibilityElement(children: .combine)
+
+                    if showTooltip {
+                        tooltipView
+                    }
+                }
 
                 Divider()
 
@@ -55,12 +61,6 @@ struct ComparisonView: View {
                         .accessibilityLabel("Song 2: \(song2.title) by \(song2.artist), \(song2.playCount) plays\(isSong2Selected ? ", selected for queuing" : "")")
                         .accessibilityHint("Tap to select this song for queuing")
                 }
-                .overlay(alignment: .bottom) {
-                    if showTooltip {
-                        tooltipView
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                    }
-                }
                 .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.5), trigger: selectedSongForQueue?.id)
 
                 // Matching Buttons
@@ -88,10 +88,7 @@ struct ComparisonView: View {
 
             // Show tooltip on first use
             if !hasSeenTooltip {
-                try? await Task.sleep(for: .milliseconds(500))
-                withAnimation(.easeOut(duration: 0.3)) {
-                    showTooltip = true
-                }
+                showTooltip = true
             }
         }
     }
@@ -162,7 +159,7 @@ struct ComparisonView: View {
             VStack(spacing: 4) {
                 Image(systemName: "play.circle.fill")
                     .font(.title2)
-                    .foregroundStyle(color)
+                    .foregroundStyle(color.gradient)
 
                 Text("\(song.playCount)")
                     .font(.title2)
