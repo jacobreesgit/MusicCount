@@ -152,7 +152,6 @@ struct SuggestionsTabView: View {
 
 // MARK: - Suggestion Group Container
 
-/// Container view that wraps multiple song rows into a single swipeable unit for 2-song groups
 private struct SuggestionGroupContainer: View {
     let suggestion: Suggestion
     let onTap: () -> Void

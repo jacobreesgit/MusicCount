@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(SuggestionsService.self) private var suggestionsService
     @State private var showingResetAlert = false
-    @AppStorage("queueBehavior") private var queueBehavior: QueueBehavior = .insertNext
+    @AppStorage(StorageKeys.queueBehavior) private var queueBehavior: QueueBehavior = .insertNext
 
     var body: some View {
         Form {

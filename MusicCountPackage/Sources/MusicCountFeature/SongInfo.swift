@@ -1,8 +1,11 @@
 import Foundation
 import UIKit
 
-/// Represents song information extracted from MPMediaLibrary
-struct SongInfo: Identifiable, Sendable, Equatable {
+/// Song metadata from the user's Apple Music library.
+///
+/// Uses `@unchecked Sendable` because UIImage isn't formally Sendable,
+/// but artwork is immutable after creation and only read across boundaries.
+struct SongInfo: Identifiable, Equatable, @unchecked Sendable {
     let id: UInt64
     let title: String
     let artist: String
@@ -77,7 +80,7 @@ struct SongInfo: Identifiable, Sendable, Equatable {
     }
 }
 
-/// Summary statistics about the music library
+/// Aggregate statistics for a collection of songs.
 struct LibraryStats: Sendable {
     let totalSongs: Int
     let songsWithPlayCounts: Int

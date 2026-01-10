@@ -49,6 +49,7 @@ struct FloatingActionButton: View {
         .disabled(!isEnabled)
         .buttonStyle(ScaleButtonStyle())
         .padding(.bottom, 16)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Library.floatingActionButton)
         .accessibilityLabel("Compare songs")
         .accessibilityHint("\(selectedCount) of 2 songs selected")
         .accessibilityAddTraits(isEnabled ? [] : .isButton)

@@ -2,17 +2,30 @@ import MediaPlayer
 import Observation
 import SwiftUI
 
+/// Manages adding songs to the Apple Music playback queue.
 @MainActor
 @Observable
 final class AppleMusicQueueService {
-    enum QueueError: Error {
+    enum QueueError: Error, LocalizedError {
         case songNotFound
         case noStoreID
         case queueFailed
+
+        var errorDescription: String? {
+            switch self {
+            case .songNotFound:
+                return "The song could not be found in your library."
+            case .noStoreID:
+                return "This song cannot be queued because it's not available in Apple Music."
+            case .queueFailed:
+                return "Failed to add the song to the queue. Please try again."
+            }
+        }
     }
 
     private let systemPlayer = MPMusicPlayerController.systemMusicPlayer
 
+    /// Adds a song to the queue `count` times, using the user's preferred queue behavior.
     func addToQueue(song: SongInfo, count: Int) throws {
         // Find the song in MPMediaLibrary
         let query = MPMediaQuery.songs()
@@ -34,7 +47,7 @@ final class AppleMusicQueueService {
         let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: storeIDs)
 
         // Get user's queue behavior preference
-        let behaviorRawValue = UserDefaults.standard.string(forKey: "queueBehavior") ?? QueueBehavior.insertNext.rawValue
+        let behaviorRawValue = UserDefaults.standard.string(forKey: StorageKeys.queueBehavior) ?? QueueBehavior.insertNext.rawValue
         let behavior = QueueBehavior(rawValue: behaviorRawValue) ?? .insertNext
 
         // Apply the appropriate queue method based on user preference

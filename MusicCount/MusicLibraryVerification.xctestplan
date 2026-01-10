@@ -10,7 +10,7 @@
   ],
   "defaultOptions" : {
     "targetForVariableExpansion" : {
-      "containerPath" : "container:MusicLibraryVerification.xcodeproj",
+      "containerPath" : "container:MusicCount.xcodeproj",
       "identifier" : "8B41F6442DEDD0D5001A66F9",
       "name" : "MusicLibraryVerification"
     }
@@ -25,9 +25,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:MusicLibraryVerification.xcodeproj",
+        "containerPath" : "container:MusicCount.xcodeproj",
         "identifier" : "8B41F65B2DEDD0D6001A66F9",
-        "name" : "MusicLibraryVerificationUITests"
+        "name" : "MusicCountUITests"
       }
     }
   ],

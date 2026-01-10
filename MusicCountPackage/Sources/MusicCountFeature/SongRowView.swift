@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Reusable song row component displaying song information with optional selection badge
 struct SongRowView: View {
     let song: SongInfo
     let selectionSlot: Int?
@@ -59,7 +58,6 @@ struct SongRowView: View {
     }
 }
 
-/// Album artwork view with placeholder for missing artwork
 private struct AlbumArtworkView: View {
     let image: UIImage?
 
@@ -88,7 +86,6 @@ private struct AlbumArtworkView: View {
     }
 }
 
-/// Visual badge indicating song selection slot (1 or 2)
 private struct SelectionBadge: View {
     let slot: Int
 

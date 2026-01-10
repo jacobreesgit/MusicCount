@@ -1,6 +1,7 @@
 import MediaPlayer
 import Observation
 
+/// Handles authorization and loading of the user's Apple Music library.
 @MainActor
 @Observable
 class MusicLibraryService {
@@ -25,13 +26,13 @@ class MusicLibraryService {
         checkAuthorizationStatus()
     }
 
-    /// Check current authorization status
+    /// Refreshes authorization state without prompting the user.
     func checkAuthorizationStatus() {
         let status = MPMediaLibrary.authorizationStatus()
         authorizationState = mapAuthorizationStatus(status)
     }
 
-    /// Request authorization to access media library
+    /// Requests media library access. Loads library automatically if granted.
     func requestAuthorization() async {
         let status = await withCheckedContinuation { continuation in
             MPMediaLibrary.requestAuthorization { status in
@@ -45,7 +46,7 @@ class MusicLibraryService {
         }
     }
 
-    /// Load all songs from the media library
+    /// Loads all songs from the media library on a background thread.
     func loadMusicLibrary() async {
         loadingState = .loading
 

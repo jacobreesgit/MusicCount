@@ -1,6 +1,6 @@
 import Foundation
 
-/// Options for sorting the song list
+/// Sort field and direction options for the song list.
 enum SortOption: String, CaseIterable, Identifiable, Sendable {
     case playCountDescending = "playCountDescending"
     case playCountAscending = "playCountAscending"
@@ -27,7 +27,7 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Sort an array of songs based on this option
+    /// Returns songs sorted by this option's field and direction.
     func sorted(_ songs: [SongInfo]) -> [SongInfo] {
         switch self {
         case .playCountDescending:
@@ -63,9 +63,7 @@ enum SortOption: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Icon that represents the sort direction
-    /// - Parameter isSelected: Whether this option is currently selected
-    /// - Returns: SF Symbol name for the icon (filled if selected, outline if not)
+    /// SF Symbol for direction (filled when selected).
     func icon(isSelected: Bool) -> String {
         let suffix = isSelected ? ".fill" : ""
         switch self {

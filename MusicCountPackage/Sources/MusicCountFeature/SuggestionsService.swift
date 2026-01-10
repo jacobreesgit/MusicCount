@@ -1,17 +1,18 @@
 import Foundation
 
+/// Finds duplicate songs with different play counts and manages dismissals.
 @MainActor
 @Observable
 final class SuggestionsService: Sendable {
     private(set) var allSuggestions: [Suggestion] = []
     private var dismissedKeys: Set<String> = []
-
-    private let dismissedKeysKey = "com.musiccount.dismissedSuggestions"
+    private let dismissedKeysKey = StorageKeys.dismissedSuggestions
 
     init() {
         loadDismissedKeys()
     }
 
+    /// Active suggestions sorted by play count difference (largest first).
     var activeSuggestions: [Suggestion] {
         allSuggestions
             .compactMap { suggestion in
@@ -23,17 +24,21 @@ final class SuggestionsService: Sendable {
                 }
 
                 // Filter out individually dismissed songs
-                var filtered = suggestion
-                filtered.songs = suggestion.songs.filter { song in
+                let filteredSongs = suggestion.songs.filter { song in
                     !dismissedKeys.contains("\(groupKey)-\(song.id)")
                 }
 
                 // Only show if 2+ versions remain
-                return filtered.songs.count >= 2 ? filtered : nil
+                guard filteredSongs.count >= 2 else { return nil }
+
+                var filtered = suggestion
+                filtered.updateSongs(filteredSongs)
+                return filtered
             }
             .sorted { $0.playCountDifference > $1.playCountDifference }
     }
 
+    /// Groups songs by normalized title/artist and creates suggestions for duplicates.
     func analyzeSongs(_ songs: [SongInfo]) {
         // Group songs by normalized title AND artist
         var titleArtistGroups: [String: [SongInfo]] = [:]
@@ -62,21 +67,21 @@ final class SuggestionsService: Sendable {
         }
     }
 
-    /// Dismiss individual song (only allowed when 3+ songs in group)
+    /// Dismisses a single song version from a suggestion group.
     func dismissSong(title: String, artist: String, songId: UInt64) {
         let key = "\(normalizeTitle(title))-\(normalizeArtist(artist))-\(songId)"
         dismissedKeys.insert(key)
         saveDismissedKeys()
     }
 
-    /// Dismiss entire suggestion group (used for 2-song groups)
+    /// Dismisses all versions of a song from suggestions.
     func dismissEntireGroup(title: String, artist: String) {
         let key = "\(normalizeTitle(title))-\(normalizeArtist(artist))-ENTIRE_GROUP"
         dismissedKeys.insert(key)
         saveDismissedKeys()
     }
 
-    /// Reset all dismissed suggestions (both individual songs and entire groups)
+    /// Clears all dismissals, restoring suggestions to the active list.
     func resetDismissals() {
         dismissedKeys.removeAll()
         UserDefaults.standard.removeObject(forKey: dismissedKeysKey)

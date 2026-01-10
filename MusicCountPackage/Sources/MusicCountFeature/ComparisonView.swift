@@ -8,9 +8,11 @@ struct ComparisonView: View {
 
     @Environment(AppleMusicQueueService.self) private var queueService
     @State private var showingSuccessAlert = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
     @State private var queuedCount = 0
     @State private var selectedSongForQueue: SongInfo?
-    @AppStorage("hasSeenSongSelectionTooltip") private var hasSeenTooltip = false
+    @AppStorage(StorageKeys.hasSeenSongSelectionTooltip) private var hasSeenTooltip = false
     @State private var showTooltip = false
 
     var body: some View {
@@ -76,6 +78,11 @@ struct ComparisonView: View {
             }
         } message: {
             Text("\(queuedCount) copies of \(selectedSong.title) have been added to your Apple Music queue. Open the Music app to start playback.")
+        }
+        .alert("Unable to Add to Queue", isPresented: $showingErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
         }
         .task {
             // Default to lower play count song
@@ -398,8 +405,12 @@ struct ComparisonView: View {
                         try queueService.addToQueue(song: selectedSong, count: matchPlaysNeeded)
                         queuedCount = matchPlaysNeeded
                         showingSuccessAlert = true
+                    } catch let error as AppleMusicQueueService.QueueError {
+                        errorMessage = error.localizedDescription
+                        showingErrorAlert = true
                     } catch {
-                        // Handle error silently for now
+                        errorMessage = "An unexpected error occurred. Please try again."
+                        showingErrorAlert = true
                     }
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
@@ -448,8 +459,12 @@ struct ComparisonView: View {
                         try queueService.addToQueue(song: selectedSong, count: addModeTargetPlays)
                         queuedCount = addModeTargetPlays
                         showingSuccessAlert = true
+                    } catch let error as AppleMusicQueueService.QueueError {
+                        errorMessage = error.localizedDescription
+                        showingErrorAlert = true
                     } catch {
-                        // Handle error silently for now
+                        errorMessage = "An unexpected error occurred. Please try again."
+                        showingErrorAlert = true
                     }
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {

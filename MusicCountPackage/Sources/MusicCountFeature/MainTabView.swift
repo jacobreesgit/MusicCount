@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Root tab view containing Library, Suggestions, and Settings tabs.
 public struct MainTabView: View {
     @State private var selectedTab = 0
     @State private var queueService = AppleMusicQueueService()
@@ -12,6 +13,7 @@ public struct MainTabView: View {
                     Label("Library", systemImage: "music.note.list")
                 }
                 .tag(0)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.libraryTab)
 
             SuggestionsTabView(selectedTab: $selectedTab)
                 .tabItem {
@@ -19,12 +21,14 @@ public struct MainTabView: View {
                 }
                 .badge(suggestionsService.activeSuggestions.count)
                 .tag(1)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.suggestionsTab)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
                 .tag(2)
+                .accessibilityIdentifier(AccessibilityIdentifiers.TabBar.settingsTab)
         }
         .environment(queueService)
         .environment(suggestionsService)

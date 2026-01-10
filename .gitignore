@@ -73,3 +73,8 @@ fastlane/test_output
 .cursor/
 CLAUDE.md
 .github/copilot-instructions.md
+
+# Skill directories
+code-review-excellence/
+docs-write/
+frontend-design/

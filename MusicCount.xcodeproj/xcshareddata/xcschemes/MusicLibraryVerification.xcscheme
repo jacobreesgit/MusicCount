@@ -17,8 +17,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8B41F6442DEDD0D5001A66F9"
                BuildableName = "MusicCount.app"
-               BlueprintName = "MusicLibraryVerification"
-               ReferencedContainer = "container:MusicLibraryVerification.xcodeproj">
+               BlueprintName = "MusicCount"
+               ReferencedContainer = "container:MusicCount.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,10 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MusicLibraryVerification.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:MusicLibraryVerification/MusicLibraryVerification.xctestplan"
+            reference = "container:MusicCount/MusicLibraryVerification.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -44,8 +41,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8B41F65B2DEDD0D6001A66F9"
                BuildableName = "MusicCount.xctest"
-               BlueprintName = "MusicLibraryVerificationUITests"
-               ReferencedContainer = "container:MusicLibraryVerification.xcodeproj">
+               BlueprintName = "MusicCountUITests"
+               ReferencedContainer = "container:MusicCount.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -66,8 +63,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8B41F6442DEDD0D5001A66F9"
             BuildableName = "MusicCount.app"
-            BlueprintName = "MusicLibraryVerification"
-            ReferencedContainer = "container:MusicLibraryVerification.xcodeproj">
+            BlueprintName = "MusicCount"
+            ReferencedContainer = "container:MusicCount.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -83,8 +80,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8B41F6442DEDD0D5001A66F9"
             BuildableName = "MusicCount.app"
-            BlueprintName = "MusicLibraryVerification"
-            ReferencedContainer = "container:MusicLibraryVerification.xcodeproj">
+            BlueprintName = "MusicCount"
+            ReferencedContainer = "container:MusicCount.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

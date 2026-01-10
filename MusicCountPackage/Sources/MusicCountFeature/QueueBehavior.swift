@@ -1,5 +1,6 @@
 import Foundation
 
+/// How songs are added to the Apple Music queue.
 enum QueueBehavior: String, CaseIterable, Identifiable, RawRepresentable {
     case insertNext = "prepend"
     case replaceQueue = "replace"
