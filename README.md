@@ -229,8 +229,4 @@ xcodebuild -workspace MusicLibraryVerification.xcworkspace \
 
 ---
 
-## Acknowledgments
-
-This project was scaffolded using [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP), which provides tools for AI-assisted iOS development workflows.
-
 Built with ❤️ for music enthusiasts who care about their play count statistics.

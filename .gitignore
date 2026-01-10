@@ -69,6 +69,7 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-# Claude / AI assistant files
-CLAUDE.md
+# Editor/IDE config
 .cursor/
+CLAUDE.md
+.github/copilot-instructions.md
