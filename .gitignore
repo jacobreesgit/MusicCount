@@ -13,6 +13,9 @@ xcuserdata/
 /*.jpg
 /*.jpeg
 
+## Screenshot folders
+iPhone*Screenshots/
+
 ## Obj-C/Swift specific
 *.hmap
 
@@ -71,8 +74,12 @@ fastlane/test_output
 
 # Editor/IDE config
 .cursor/
+.claude/
 CLAUDE.md
 .github/copilot-instructions.md
+
+# Portfolio/personal documentation
+portfolio.md
 
 # Skill directories
 code-review-excellence/

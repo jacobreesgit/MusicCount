@@ -22,6 +22,12 @@ struct MockSong: Sendable {
 /// Includes variety of play counts, artists, albums, and duplicate songs for Suggestions feature
 enum MockSongData {
     static let songs: [MockSong] = [
+        // TESTING: 4 versions of Blinding Lights from different albums with different artwork (verified via iTunes API)
+        MockSong(title: "Blinding Lights", artist: "The Weeknd", album: "After Hours", playCount: 612, duration: 200),
+        MockSong(title: "Blinding Lights", artist: "The Weeknd", album: "The Highlights", playCount: 345, duration: 200),
+        MockSong(title: "Blinding Lights", artist: "The Weeknd", album: "Live At SoFi Stadium", playCount: 178, duration: 200),
+        MockSong(title: "Blinding Lights", artist: "The Weeknd", album: "Blinding Lights - Single", playCount: 89, duration: 200),
+
         // Taylor Swift - 1989 (Deluxe) - High play counts
         MockSong(title: "Shake It Off", artist: "Taylor Swift", album: "1989 (Deluxe)", playCount: 287, duration: 219),
         MockSong(title: "Blank Space", artist: "Taylor Swift", album: "1989 (Deluxe)", playCount: 245, duration: 231),
