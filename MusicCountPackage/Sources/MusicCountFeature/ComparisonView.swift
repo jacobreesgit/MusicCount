@@ -12,21 +12,13 @@ struct ComparisonView: View {
     @State private var errorMessage = ""
     @State private var queuedCount = 0
     @State private var selectedSongForQueue: SongInfo?
-    @AppStorage(StorageKeys.hasSeenSongSelectionTooltip) private var hasSeenTooltip = false
-    @State private var showTooltip = false
 
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
                 // Header with comparison summary
-                VStack(spacing: 12) {
-                    comparisonSummary
-                        .accessibilityElement(children: .combine)
-
-                    if showTooltip {
-                        tooltipView
-                    }
-                }
+                comparisonSummary
+                    .accessibilityElement(children: .combine)
 
                 Divider()
 
@@ -91,11 +83,6 @@ struct ComparisonView: View {
                 selectedSongForQueue = nil
             } else {
                 selectedSongForQueue = song1.playCount <= song2.playCount ? song1 : song2
-            }
-
-            // Show tooltip on first use
-            if !hasSeenTooltip {
-                showTooltip = true
             }
         }
     }
@@ -200,28 +187,6 @@ struct ComparisonView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             selectSong(song)
-        }
-    }
-
-    // MARK: - Tooltip
-
-    private var tooltipView: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "hand.tap.fill")
-                .font(.subheadline)
-            Text("Tap either song to change which one gets queued")
-                .font(.subheadline)
-        }
-        .foregroundStyle(.white)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(Color.black.opacity(0.8), in: Capsule())
-        .padding(.bottom, 8)
-        .onTapGesture {
-            withAnimation(.easeOut(duration: 0.2)) {
-                showTooltip = false
-            }
-            hasSeenTooltip = true
         }
     }
 
@@ -363,14 +328,6 @@ struct ComparisonView: View {
     private func selectSong(_ song: SongInfo) {
         withAnimation(.easeOut(duration: 0.3)) {
             selectedSongForQueue = song
-        }
-
-        // Dismiss tooltip on first selection
-        if showTooltip {
-            withAnimation(.easeOut(duration: 0.2)) {
-                showTooltip = false
-            }
-            hasSeenTooltip = true
         }
     }
 

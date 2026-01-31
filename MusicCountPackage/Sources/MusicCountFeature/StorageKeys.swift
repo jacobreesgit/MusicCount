@@ -4,5 +4,4 @@ import Foundation
 enum StorageKeys {
     static let queueBehavior = "queueBehavior"
     static let dismissedSuggestions = "com.musiccount.dismissedSuggestions"
-    static let hasSeenSongSelectionTooltip = "hasSeenSongSelectionTooltip"
 }
